@@ -8,15 +8,16 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    {{-- Подключаем стили через asset() --}}
+    {{-- Styles --}}
     <link rel="stylesheet" href="{{ asset('CSS/admin/normalize.css') }}">
     <link rel="stylesheet" href="{{ asset('CSS/admin/styles.css') }}">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    {{-- <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" /> --}}
-    <link
-        href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&amp;subset=cyrillic,cyrillic-ext,latin-ext"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&amp;subset=cyrillic,cyrillic-ext,latin-ext" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
