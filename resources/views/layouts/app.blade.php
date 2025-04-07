@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="{{ asset('CSS/admin/styles.css') }}">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    {{-- <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" /> --}}
     <link
         href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&amp;subset=cyrillic,cyrillic-ext,latin-ext"
         rel="stylesheet">
@@ -23,7 +23,7 @@
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen">
         @include('layouts.navigation')
 
         <!-- Page Heading -->
@@ -35,8 +35,13 @@
             </header>
         @endisset
 
+        <header class="page-header">
+            <h1 class="page-header__title">Идём<span>в</span>кино</h1>
+            <span class="page-header__subtitle">Администраторррская</span>
+        </header>
+
         <!-- Page Content -->
-        <main>
+        <main class="conf-steps">
             {{ $slot }}
         </main>
         <script src="{{ asset('js/admin/accordeon.js') }}"></script>
