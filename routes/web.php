@@ -8,6 +8,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/clienthall', function () {
+    return view('client.hall');
+});
+
+Route::get('/clientindex', function () {
+    return view('client.index');
+});
+
+Route::get('/clientpayment', function () {
+    return view('client.payment');
+});
+
+Route::get('/clientticket', function () {
+    return view('client.ticket');
+});
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
