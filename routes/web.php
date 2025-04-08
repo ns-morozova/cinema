@@ -5,22 +5,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/clienthall', function () {
-    return view('client.hall');
-});
-
-Route::get('/clientindex', function () {
     return view('client.index');
 });
 
-Route::get('/clientpayment', function () {
+Route::get('/hall', function () {
+    return view('client.hall');
+});
+
+Route::get('/payment', function () {
     return view('client.payment');
 });
 
-Route::get('/clientticket', function () {
+Route::get('/ticket', function () {
     return view('client.ticket');
 });
 
