@@ -14,11 +14,13 @@
         </ul>
         <p class="conf-step__paragraph">Установите цены для типов кресел:</p>
         <div class="conf-step__legend">
-            <label class="conf-step__label">Цена, рублей<input type="text" class="conf-step__input" placeholder="0"></label>
+            <label class="conf-step__label">Цена, рублей<input type="text" class="conf-step__input"
+                    placeholder="0"></label>
             за <span class="conf-step__chair conf-step__chair_standart"></span> обычные кресла
         </div>
         <div class="conf-step__legend">
-            <label class="conf-step__label">Цена, рублей<input type="text" class="conf-step__input" placeholder="0" value="350"></label>
+            <label class="conf-step__label">Цена, рублей<input type="text" class="conf-step__input" placeholder="0"
+                    value="350"></label>
             за <span class="conf-step__chair conf-step__chair_vip"></span> VIP кресла
         </div>
         <fieldset class="conf-step__buttons text-center">

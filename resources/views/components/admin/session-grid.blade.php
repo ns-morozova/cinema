@@ -9,40 +9,35 @@
         <div class="conf-step__movies">
             <!-- Здесь размещаются фильмы -->
             <div class="conf-step__movie">
-                <img class="conf-step__movie-poster" alt="poster"
-                    src="{{ asset('images/admin/poster.png') }}">
+                <img class="conf-step__movie-poster" alt="poster" src="{{ asset('images/admin/poster.png') }}">
                 <h3 class="conf-step__movie-title">Звёздные войны XXIII: Атака клонированных клонов</h3>
                 <p class="conf-step__movie-duration">130 минут</p>
             </div>
 
             <div class="conf-step__movie">
-                <img class="conf-step__movie-poster" alt="poster"
-                    src="{{ asset('images/admin/poster.png') }}">
+                <img class="conf-step__movie-poster" alt="poster" src="{{ asset('images/admin/poster.png') }}">
                 <h3 class="conf-step__movie-title">Миссия выполнима</h3>
                 <p class="conf-step__movie-duration">120 минут</p>
             </div>
 
             <div class="conf-step__movie">
-                <img class="conf-step__movie-poster" alt="poster"
-                    src="{{ asset('images/admin/poster.png') }}">
+                <img class="conf-step__movie-poster" alt="poster" src="{{ asset('images/admin/poster.png') }}">
                 <h3 class="conf-step__movie-title">Серая пантера</h3>
                 <p class="conf-step__movie-duration">90 минут</p>
             </div>
 
             <div class="conf-step__movie">
-                <img class="conf-step__movie-poster" alt="poster"
-                    src="{{ asset('images/admin/poster.png') }}">
+                <img class="conf-step__movie-poster" alt="poster" src="{{ asset('images/admin/poster.png') }}">
                 <h3 class="conf-step__movie-title">Движение вбок</h3>
                 <p class="conf-step__movie-duration">95 минут</p>
             </div>
 
             <div class="conf-step__movie">
-                <img class="conf-step__movie-poster" alt="poster"
-                    src="{{ asset('images/admin/poster.png') }}">
+                <img class="conf-step__movie-poster" alt="poster" src="{{ asset('images/admin/poster.png') }}">
                 <h3 class="conf-step__movie-title">Кот Да Винчи</h3>
                 <p class="conf-step__movie-duration">100 минут</p>
             </div>
-        </div>   
+        </div>
 
         <div class="conf-step__seances">
             <!-- Здесь размещаются сеансы -->
@@ -93,5 +88,5 @@
     </div>
 
 
-    
+
 </section>
