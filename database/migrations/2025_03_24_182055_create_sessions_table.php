@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('movie_sessions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('movie_id')->constrained()->onDelete('cascade'); // Связь с фильмом
-            $table->foreignId('hall_id')->constrained()->onDelete('cascade'); // Связь с кинозалом
+            $table->foreignId('hall_id')->constrained('cinema_halls')->onDelete('cascade'); // Связь с кинозалом
             $table->dateTime('start_time'); // Время начала сеанса
             $table->dateTime('end_time'); // Время окончания сеанса
             $table->timestamps();

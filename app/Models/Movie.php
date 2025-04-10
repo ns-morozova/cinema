@@ -9,11 +9,11 @@ class Movie extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'title',
-        'description',
-        'duration',
-        'price_vip',
-        'price_regular',
-    ];
+    protected $fillable = ['title', 'description', 'duration', 'price_vip', 'price_regular'];
+
+    // Фильм может быть во многих сеансах.
+    public function movieSessions()
+    {
+        return $this->hasMany(MovieSession::class, 'movie_id');
+    }
 }

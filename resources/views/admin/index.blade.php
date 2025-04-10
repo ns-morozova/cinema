@@ -1,10 +1,8 @@
 {{-- тестовый массив --}}
 <x-app-layout>
-    <main class="conf-steps">
-        <x-hall-management :halls="$halls" />
-        <x-hall-configuration :halls="$halls" />
-        <x-price-configuration :halls="$halls" />
-        <x-session-grid :halls="$halls" />
-        <x-opening-sales/>
-    </main>
+    <x-admin.hall-management :halls="$halls" />
+    <x-admin.hall-configuration :halls="$halls" />
+    <x-admin.price-configuration :halls="$halls" />
+    <x-admin.session-grid :halls="$halls" />
+    <x-admin.opening-sales/>
 </x-app-layout>

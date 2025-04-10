@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Database\Seeders\MovieSeeder;
 use Database\Seeders\CinemaHallSeeder;
+use Database\Seeders\MovieSessionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,7 +19,7 @@ class DatabaseSeeder extends Seeder
 
        
     {
-        $this->call([MovieSeeder::class,CinemaHallSeeder::class]);
+        $this->call([MovieSeeder::class,CinemaHallSeeder::class,MovieSessionSeeder::class]);
         
         User::factory()->create([
             'name' => 'Test User',
