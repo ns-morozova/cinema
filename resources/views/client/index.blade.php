@@ -1,5 +1,5 @@
 <x-layouts.client>
-    <nav class="page-nav">
+    {{-- <nav class="page-nav">
         <a class="page-nav__day page-nav__day_today" href="#">
             <span class="page-nav__day-week">Пн</span><span class="page-nav__day-number">31</span>
         </a>
@@ -20,7 +20,9 @@
         </a>
         <a class="page-nav__day page-nav__day_next" href="#">
         </a>
-    </nav>
+    </nav> --}}
+
+    <x-client.navbar />
 
     <section class="movie">
         <div class="movie__info">
