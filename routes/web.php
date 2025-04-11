@@ -22,8 +22,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/admin', [AdminController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('admin.index');
+// Группа маршрутов с префиксом /admin и middleware auth, verified
+Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
+    // Роут для главной страницы админ-панели
+    Route::get('/', [AdminController::class, 'index'])
+        ->name('admin.index');
+
+    // Роут для получения данных о зале через AJAX
+    Route::post('/get-hall-data', [AdminController::class, 'getHallData'])
+        ->name('admin.getHallData');
+});
+
     
 require __DIR__.'/auth.php';
