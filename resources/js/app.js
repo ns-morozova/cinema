@@ -2,6 +2,9 @@ import './bootstrap';
 
 import Alpine from 'alpinejs';
 
+import '../css/client/styles.css';
+import '../css/admin/styles.css'
+
 window.Alpine = Alpine;
 
 Alpine.start();
