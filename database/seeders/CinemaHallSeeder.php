@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\CinemaHall;
 use App\Models\Seat;
+use App\Enums\SeatType;
 
 class CinemaHallSeeder extends Seeder
 {
@@ -29,7 +30,7 @@ class CinemaHallSeeder extends Seeder
             $seats = [];
             for ($row = 1; $row <= $hall->rows; $row++) {
                 for ($seat = 1; $seat <= $hall->seats_per_row; $seat++) {
-                    $type = ($row <= 2) ? 'vip' : 'regular'; // Первые два ряда — VIP
+                    $type = ($row <= 2) ? SeatType::VIP->value : SeatType::STANDART->value; // Первые два ряда — VIP
                     $seats[] = [
                         'hall_id' => $hall->id,
                         'row' => $row,

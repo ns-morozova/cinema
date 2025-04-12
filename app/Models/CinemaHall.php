@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use App\Enums\SeatType;
 
 class CinemaHall extends Model
 {
@@ -41,7 +42,7 @@ class CinemaHall extends Model
         $seats = [];
         for ($row = 1; $row <= $hall->rows; $row++) {
             for ($seat = 1; $seat <= $hall->seats_per_row; $seat++) {
-                $type = ($row <= 2) ? 'vip' : 'regular'; // Первые два ряда — VIP
+                $type = ($row <= 2) ? SeatType::VIP->value : SeatType::STANDART->value; // Первые два ряда — VIP
                 $seats[] = [
                     'hall_id' => $hall->id,
                     'row' => $row,

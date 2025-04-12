@@ -13,7 +13,7 @@ class CreateSeatsTable extends Migration
             $table->foreignId('hall_id')->constrained('cinema_halls')->onDelete('cascade'); // Связь с залом
             $table->integer('row')->unsigned(); // Номер ряда
             $table->integer('seat')->unsigned(); // Номер места в ряду
-            $table->enum('type', ['vip', 'regular'])->default('regular'); // Тип места: VIP или обычное
+            $table->enum('type', ['vip', 'standart', 'disable'])->default('standart');
             $table->timestamps();
         });
     }

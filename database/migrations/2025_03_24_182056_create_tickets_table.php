@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('session_id')->constrained()->onDelete('cascade'); // Связь с сеансом
             $table->integer('row')->unsigned(); // Номер ряда
             $table->integer('seat')->unsigned(); // Номер места
-            $table->enum('type', ['vip', 'regular']); // Тип места
+            $table->enum('type', ['vip', 'standart']); // Тип места
             $table->string('qr_code')->unique(); // Уникальный QR-код
             $table->enum('status', ['booked', 'available'])->default('available'); // Статус бронирования
             $table->timestamps();

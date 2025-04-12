@@ -55,7 +55,7 @@ class AdminController extends Controller
         foreach ($hall->seats->groupBy('row') as $rowNumber => $seatsInRow) {
             $row = [];
             foreach ($seatsInRow as $seat) {
-                $row[] = $seat->type; // Тип места: vip, regular или disabled
+                $row[] = $seat->type; // Тип места: vip, standart или disabled
             }
             $layout[] = $row;
         }
