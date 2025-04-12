@@ -348,7 +348,11 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
   position: relative;
   padding: 62px 32px 34px;
   border: 2px solid #000000;
-  text-align: center; }
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
   .conf-step__hall::before {
     content: ' экран';
     position: absolute;
@@ -357,17 +361,26 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
     right: 0;
     font-size: 1.6rem;
     letter-spacing: 1.2em;
-    text-transform: uppercase; }
+    text-transform: uppercase;
+  }
   .conf-step__hall .conf-step__chair {
-    cursor: pointer; }
+    cursor: pointer;
+  }
   .conf-step__hall .conf-step__hall-wrapper {
-    display: inline-block; }
-    .conf-step__hall .conf-step__hall-wrapper .conf-step__row {
-      font-size: 0; }
-    .conf-step__hall .conf-step__hall-wrapper .conf-step__row + .conf-step__row {
-      margin-top: 10px; }
-    .conf-step__hall .conf-step__hall-wrapper .conf-step__chair + .conf-step__chair {
-      margin-left: 10px; }
+    display: inline-block;
+  }
+  .conf-step__hall .conf-step__hall-wrapper .conf-step__row {
+    font-size: 0;
+  }
+  .conf-step__hall .conf-step__hall-wrapper .conf-step__row + .conf-step__row {
+    margin-top: 10px;
+  }
+  .conf-step__hall .conf-step__hall-wrapper .conf-step__chair + .conf-step__chair {
+    margin-left: 10px;
+  }
+  .conf-step__chair:not(:first-of-type) {
+    margin-left: 10px;
+  }
 
 .conf-step__movies {
   display: flex;
@@ -583,4 +596,69 @@ textarea.conf-step__input {
   color: #ff0000;
   font-weight: 600;
 }
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal__window {
+    position: relative;
+    background: #fff;
+    padding: 30px 25px;
+    margin: 25% auto;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    z-index: 10000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal__title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.modal__label {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 1.6rem;
+    color: #000000;
+}
+
+.modal__input {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 14px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
 /*# sourceMappingURL=styles.css.map */

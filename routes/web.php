@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
+use App\Models\CinemaHall;
 
 Route::controller(ClientController::class)->group(function () {
     Route::get('/', 'index')->name('client.index');
@@ -34,6 +35,13 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/update-hall-layout', [AdminController::class, 'updateHallLayout'])
         ->name('admin.updateHallLayout');
+
+    Route::post('/cinema-halls/store', [CinemaHall::class, 'store'])
+        ->name('admin.cinema-halls.store');
+
+    Route::delete('/cinema-halls/{id}', [CinemaHall::class, 'destroyHall'])
+        ->name('admin.cinema-halls.destroy');
+
 });
 
     

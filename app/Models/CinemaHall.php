@@ -56,8 +56,25 @@ class CinemaHall extends Model
     
         // Массовое создание мест
         Seat::insert($seats);
+
+        if ($request->ajax()) {
+            return response()->json($hall);
+        }
     
-        return redirect()->route('admin.cinema-halls.index')->with('success', 'Зал успешно создан.');
+        return redirect()->route('admin.index')->with('success', 'Зал успешно создан.');
+    }
+
+    public function destroyHall($id)
+    {
+        $hall = CinemaHall::findOrFail($id);
+
+        // Удаляем связанные места
+        $hall->seats()->delete();
+
+        // Удаляем сам зал
+        $hall->delete();
+
+        return redirect()->route('admin.index')->with('success', 'Зал успешно удалён.');
     }
 
 }
