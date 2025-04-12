@@ -31,6 +31,9 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     // Роут для получения данных о зале через AJAX
     Route::post('/get-hall-data', [AdminController::class, 'getHallData'])
         ->name('admin.getHallData');
+
+    Route::post('/update-hall-layout', [AdminController::class, 'updateHallLayout'])
+        ->name('admin.updateHallLayout');
 });
 
     

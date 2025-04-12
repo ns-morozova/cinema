@@ -66,4 +66,43 @@ class AdminController extends Controller
             'layout' => $layout,
         ]);
     }
+
+    // Обновление конфигурации зала
+    public function updateHallLayout(Request $request)
+    {
+        $validated = $request->validate([
+            'hall_id' => 'required|exists:cinema_halls,id',
+            'rows' => 'required|integer|min:1',
+            'seats_per_row' => 'required|integer|min:1',
+            'layout' => 'required|array',
+        ]);
+
+        $hall = CinemaHall::find($validated['hall_id']);
+        $hall->update([
+            'rows' => $validated['rows'],
+            'seats_per_row' => $validated['seats_per_row'],
+        ]);
+
+        // Удаляем старые места
+        $hall->seats()->delete();
+
+        // Перезаписываем
+        $seats = [];
+        foreach ($validated['layout'] as $rowIndex => $row) {
+            foreach ($row as $seatIndex => $type) {
+                $seats[] = [
+                    'hall_id' => $hall->id,
+                    'row' => $rowIndex + 1,
+                    'seat' => $seatIndex + 1,
+                    'type' => $type,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
+
+        \App\Models\Seat::insert($seats);
+
+        return response()->json(['message' => 'Схема успешно сохранена']);
+    }
 }
