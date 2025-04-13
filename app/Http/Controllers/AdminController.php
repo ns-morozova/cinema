@@ -60,10 +60,14 @@ class AdminController extends Controller
             $layout[] = $row;
         }
 
+        // Формируем цены
+        $prices = $hall->seatPrices->pluck('price', 'seat_type');
+
         return response()->json([
             'rows' => $hall->rows,
             'seats_per_row' => $hall->seats_per_row,
             'layout' => $layout,
+            'prices' => $prices,
         ]);
     }
 

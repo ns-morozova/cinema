@@ -88,24 +88,6 @@
         }
 
         // Функция для отрисовки плана зала
-        
-        // function renderHallLayout(layout) {
-        //     hallLayout.innerHTML = '';
-
-        //     layout.forEach(row => {
-        //         const rowDiv = document.createElement('div');
-        //         rowDiv.className = 'conf-step__row';
-
-        //         row.forEach(seatType => {
-        //             const seatSpan = document.createElement('span');
-        //             seatSpan.className = `conf-step__chair conf-step__chair_${seatType}`;
-        //             rowDiv.appendChild(seatSpan);
-        //         });
-
-        //         hallLayout.appendChild(rowDiv);
-        //     });
-        // }
-
         function renderHallLayout(layout) {
             hallLayout.innerHTML = '';
 
