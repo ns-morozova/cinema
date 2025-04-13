@@ -35,7 +35,7 @@
         </div>
         <fieldset class="conf-step__buttons text-center">
             <button class="conf-step__button conf-step__button-regular">Отмена</button>
-            <input type="submit" value="Сохранить" class="conf-step__button conf-step__button-accent">
+            <button id="save-configuration-price" class="conf-step__button conf-step__button-accent">Сохранить</button>
         </fieldset>
     </div>
 </section>
@@ -98,5 +98,35 @@
             firstHallRadio.checked = true;
             updateHallData(firstHallRadio.value);
         }
+
+        // Слушатель на кнопку Сохранить
+        document.getElementById('save-configuration-price').addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            const hallId = document.querySelector('#hall-selector-price input[type="radio"]:checked')?.value;
+            if (!hallId) return;
+
+            try {
+                const response = await fetch('/admin/update-hall-price', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({
+                        hall_id: hallId,
+                        vip: parseInt(priceVipInput.value),
+                        standart: parseInt(priceStandartInput.value),
+                    })
+                });
+
+                const result = await response.json();
+                alert(result.message || 'Изменения сохранены');
+            } catch (err) {
+                alert('Ошибка при сохранении');
+                console.error(err);
+            }
+        });
+
     });
 </script>

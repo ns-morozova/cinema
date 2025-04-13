@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CinemaHall;
+use App\Models\SeatPrice;
 
 class AdminController extends Controller
 {
@@ -62,6 +63,8 @@ class AdminController extends Controller
 
         // Формируем цены
         $prices = $hall->seatPrices->pluck('price', 'seat_type');
+        $prices['vip'] = $prices['vip'] ?? 0;
+        $prices['standart'] = $prices['standart'] ?? 0;
 
         return response()->json([
             'rows' => $hall->rows,
@@ -109,4 +112,29 @@ class AdminController extends Controller
 
         return response()->json(['message' => 'Схема успешно сохранена']);
     }
+
+  // Обновление (добавление) цен для текущего зала
+  public function updateHallPrice(Request $request)
+  {
+      $validated = $request->validate([
+          'hall_id' => 'required|exists:cinema_halls,id',
+          'vip' => 'required|numeric|min:0',
+          'standart' => 'required|numeric|min:0',
+      ]);
+
+      $hallId = $validated['hall_id'];
+
+      // Обновляем или создаем записи для цен
+      SeatPrice::updateOrCreate(
+          ['hall_id' => $hallId, 'seat_type' => 'vip'],
+          ['price' => $validated['vip']]
+      );
+
+      SeatPrice::updateOrCreate(
+          ['hall_id' => $hallId, 'seat_type' => 'standart'],
+          ['price' => $validated['standart']]
+      );
+
+      return response()->json(['message' => 'Цены успешно обновлены']);
+  }    
 }

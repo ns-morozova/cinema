@@ -16,9 +16,9 @@ class CinemaHallSeeder extends Seeder
     {
         // Данные для вставки
         $halls = [
-            ['name' => 'Зал 1', 'rows' => 10, 'seats_per_row' => 20],
-            ['name' => 'Зал 2', 'rows' => 8, 'seats_per_row' => 15],
-            ['name' => 'Зал 3', 'rows' => 12, 'seats_per_row' => 25],
+            ['name' => 'Зал 1', 'rows' => 10, 'seats_per_row' => 17],
+            ['name' => 'Зал 2', 'rows' => 11, 'seats_per_row' => 15],
+            ['name' => 'Зал 3', 'rows' => 25, 'seats_per_row' => 20],
         ];
 
         // Добавление данных в таблицу через модель

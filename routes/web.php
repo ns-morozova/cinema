@@ -36,6 +36,9 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::post('/update-hall-layout', [AdminController::class, 'updateHallLayout'])
         ->name('admin.updateHallLayout');
 
+    Route::post('/update-hall-price', [AdminController::class, 'updateHallPrice'])
+        ->name('admin.updateHallPrice');
+
     Route::post('/cinema-halls/store', [CinemaHall::class, 'store'])
         ->name('admin.cinema-halls.store');
 
