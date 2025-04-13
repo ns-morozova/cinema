@@ -77,4 +77,10 @@ class CinemaHall extends Model
         return redirect()->route('admin.index')->with('success', 'Зал успешно удалён.');
     }
 
+    // Зал имеет много цен
+    public function seatPrices()
+    {
+        return $this->hasMany(SeatPrice::class, 'hall_id');
+    }    
+
 }
