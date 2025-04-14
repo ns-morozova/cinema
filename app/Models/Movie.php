@@ -9,7 +9,7 @@ class Movie extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'duration', 'price_vip', 'price_regular'];
+    protected $fillable = ['title', 'description', 'duration', 'price_vip', 'price_regular', 'poster'];
 
     // Фильм может быть во многих сеансах.
     public function movieSessions()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\CinemaHall;
 use App\Models\SeatPrice;
+use App\Models\Movie;
 
 class AdminController extends Controller
 {
@@ -33,9 +34,13 @@ class AdminController extends Controller
             $selectedHall = CinemaHall::find($halls[0]['id']);
         }
 
+        // Получаем все фильмы
+        $movies = Movie::all();
+
         $data = [
             'halls' => $halls,
             'selectedHall' => $selectedHall,
+            'movies' => $movies,
         ];
 
         return view('admin.index', $data);

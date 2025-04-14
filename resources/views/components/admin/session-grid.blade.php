@@ -6,8 +6,7 @@
         <p class="conf-step__paragraph">
             <button class="conf-step__button conf-step__button-accent">Добавить фильм</button>
         </p>
-        <div class="conf-step__movies">
-            <!-- Здесь размещаются фильмы -->
+        {{-- <div class="conf-step__movies">
             <div class="conf-step__movie">
                 <img class="conf-step__movie-poster" alt="poster" src="{{ asset('images/admin/poster.png') }}">
                 <h3 class="conf-step__movie-title">Звёздные войны XXIII: Атака клонированных клонов</h3>
@@ -37,6 +36,19 @@
                 <h3 class="conf-step__movie-title">Кот Да Винчи</h3>
                 <p class="conf-step__movie-duration">100 минут</p>
             </div>
+        </div> --}}
+
+        <div class="conf-step__movies">
+            @forelse($movies as $movie)
+                <div class="conf-step__movie">
+                    <img class="conf-step__movie-poster" alt="poster"
+                        src="{{ $movie->poster ? asset($movie->poster) : asset('images/admin/poster.png') }}">
+                    <h3 class="conf-step__movie-title">{{ $movie->title }}</h3>
+                    <p class="conf-step__movie-duration">{{ $movie->duration }} минут</p>
+                </div>
+            @empty
+                <p>Фильмы пока не добавлены.</p>
+            @endforelse
         </div>
 
         <div class="conf-step__seances">
@@ -80,13 +92,9 @@
             </div>
         </div>
 
-
         <fieldset class="conf-step__buttons text-center">
             <button class="conf-step__button conf-step__button-regular">Отмена</button>
             <input type="submit" value="Сохранить" class="conf-step__button conf-step__button-accent">
         </fieldset>
     </div>
-
-
-
 </section>
