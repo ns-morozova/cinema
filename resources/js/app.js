@@ -23,3 +23,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+document.addEventListener('focusin', function (e) {
+    const el = e.target;
+
+    const isTextInput =
+        (el.tagName === 'INPUT' &&
+            ['text', 'number', 'email', 'tel', 'url', 'search', 'password'].includes(el.type)) ||
+        el.tagName === 'TEXTAREA';
+
+    if (isTextInput && !el.dataset.selectedOnce) {
+        el.select();
+        el.dataset.selectedOnce = 'true';
+
+        el.addEventListener('blur', () => {
+            delete el.dataset.selectedOnce;
+        }, { once: true });
+    }
+});
+

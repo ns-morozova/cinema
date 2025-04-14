@@ -34,7 +34,7 @@
             за <span class="conf-step__chair conf-step__chair_vip"></span> VIP кресла
         </div>
         <fieldset class="conf-step__buttons text-center">
-            <button class="conf-step__button conf-step__button-regular">Отмена</button>
+            <button id="cancel-configuration-price" class="conf-step__button conf-step__button-regular">Отмена</button>
             <button id="save-configuration-price" class="conf-step__button conf-step__button-accent">Сохранить</button>
         </fieldset>
     </div>
@@ -128,5 +128,11 @@
             }
         });
 
+        // Восстановление по кнопке Отмена
+        document.getElementById('cancel-configuration-price').addEventListener('click', (e) => {
+            e.preventDefault();
+            priceStandartInput.value = originalPrices.standart ?? '';
+            priceVipInput.value = originalPrices.vip ?? '';
+        });
     });
 </script>
