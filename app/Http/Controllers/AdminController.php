@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\CinemaHall;
 use App\Models\SeatPrice;
 use App\Models\Movie;
+use App\Models\MovieSession;
 
 class AdminController extends Controller
 {
@@ -37,10 +38,14 @@ class AdminController extends Controller
         // Получаем все фильмы
         $movies = Movie::all();
 
+        // Получаем все сеансы
+        $movieSessions = MovieSession::all();
+
         $data = [
             'halls' => $halls,
             'selectedHall' => $selectedHall,
             'movies' => $movies,
+            'movieSessions' => $movieSessions,
         ];
 
         return view('admin.index', $data);

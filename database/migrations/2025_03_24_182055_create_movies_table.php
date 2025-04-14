@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('description')->nullable(); // Описание фильма
             $table->integer('duration')->unsigned(); // Продолжительность в минутах
             $table->string('country')->nullable(); // Страна фильма
-            $table->decimal('price_vip', 8, 2); // Цена VIP-билета
-            $table->decimal('price_regular', 8, 2); // Цена обычного билета
+            // $table->decimal('price_vip', 8, 2); // Цена VIP-билета
+            // $table->decimal('price_regular', 8, 2); // Цена обычного билета
             $table->string('poster')->nullable(); // Добавляем колонку "poster"
             $table->timestamps();
         });

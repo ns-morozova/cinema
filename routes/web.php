@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
 use App\Models\CinemaHall;
+use App\Models\MovieSession;
 
 Route::controller(ClientController::class)->group(function () {
     Route::get('/', 'index')->name('client.index');
@@ -44,6 +45,9 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     Route::delete('/cinema-halls/{id}', [CinemaHall::class, 'destroyHall'])
         ->name('admin.cinema-halls.destroy');
+
+    Route::get('/sessions/by-date', [MovieSession::class, 'getSessionsByDate'])->name('admin.sessions.byDate');
+
 
 });
 
