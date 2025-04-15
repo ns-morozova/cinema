@@ -46,8 +46,8 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::delete('/cinema-halls/{id}', [CinemaHall::class, 'destroyHall'])
         ->name('admin.cinema-halls.destroy');
 
-    Route::get('/sessions/by-date', [MovieSession::class, 'getSessionsByDate'])->name('admin.sessions.byDate');
-
+        Route::post('/sessions/by-date', [AdminController::class, 'getSessionsByDate'])
+        ->name('admin.sessions.byDate');
 
 });
 

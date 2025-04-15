@@ -7,6 +7,7 @@ use App\Models\CinemaHall;
 use App\Models\SeatPrice;
 use App\Models\Movie;
 use App\Models\MovieSession;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -123,28 +124,50 @@ class AdminController extends Controller
         return response()->json(['message' => 'Схема успешно сохранена']);
     }
 
-  // Обновление (добавление) цен для текущего зала
-  public function updateHallPrice(Request $request)
-  {
-      $validated = $request->validate([
-          'hall_id' => 'required|exists:cinema_halls,id',
-          'vip' => 'required|numeric|min:0',
-          'standart' => 'required|numeric|min:0',
-      ]);
+    // Обновление (добавление) цен для текущего зала
+    public function updateHallPrice(Request $request)
+    {
+        $validated = $request->validate([
+            'hall_id' => 'required|exists:cinema_halls,id',
+            'vip' => 'required|numeric|min:0',
+            'standart' => 'required|numeric|min:0',
+        ]);
 
-      $hallId = $validated['hall_id'];
+        $hallId = $validated['hall_id'];
 
-      // Обновляем или создаем записи для цен
-      SeatPrice::updateOrCreate(
-          ['hall_id' => $hallId, 'seat_type' => 'vip'],
-          ['price' => $validated['vip']]
-      );
+        // Обновляем или создаем записи для цен
+        SeatPrice::updateOrCreate(
+            ['hall_id' => $hallId, 'seat_type' => 'vip'],
+            ['price' => $validated['vip']]
+        );
 
-      SeatPrice::updateOrCreate(
-          ['hall_id' => $hallId, 'seat_type' => 'standart'],
-          ['price' => $validated['standart']]
-      );
+        SeatPrice::updateOrCreate(
+            ['hall_id' => $hallId, 'seat_type' => 'standart'],
+            ['price' => $validated['standart']]
+        );
 
-      return response()->json(['message' => 'Цены успешно обновлены']);
-  }    
+        return response()->json(['message' => 'Цены успешно обновлены']);
+    }
+
+    // Получение данных о сеансах за выбранный день
+    public function getSessionsByDate(Request $request)
+    {
+        // Получаем дату из тела запроса
+        $date = $request->input('date');
+    
+        // Проверяем формат даты
+        // if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        //     return response()->json(['error' => 'Некорректный формат даты'], 400);
+        // }
+    
+        // Логика получения сеансов за указанную дату
+        $sessions = MovieSession::whereDate('start_time', $date)
+            ->with(['movie', 'hall'])
+            ->get()
+            ->groupBy('hall_id');
+    
+        return response()->json([
+            'sessions' => $sessions,
+        ]);
+    }
 }
