@@ -21,7 +21,7 @@
         <div class="mt-20">
             @php
                 use Carbon\Carbon;
-                $startDate = Carbon::create(2025, 4, 14);
+                $startDate = Carbon::today();
                 $dates = [];
                 for ($i = 0; $i < 14; $i++) {
                     $dates[] = $startDate->copy()->addDays($i);
@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const data = await response.json();
         renderSessions(data.sessions);
+
     } catch (error) {
         console.error('Ошибка при загрузке сеансов:', error);
     }

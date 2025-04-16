@@ -153,18 +153,13 @@ class AdminController extends Controller
     public function getSessionsByDate(Request $request)
     {
         // Получаем дату из тела запроса
-        $date = $request->input('date');
-    
-        // Проверяем формат даты
-        // if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-        //     return response()->json(['error' => 'Некорректный формат даты'], 400);
-        // }
-    
+        $date = Carbon::parse($request->input('date'));
+
+        $startOfDay = $date->copy()->startOfDay();
+        $endOfDay = $date->copy()->endOfDay();
+
         // Логика получения сеансов за указанную дату
-        $sessions = MovieSession::whereDate('start_time', $date)
-            ->with(['movie', 'hall'])
-            ->get()
-            ->groupBy('hall_id');
+        $sessions = MovieSession::with(['movie', 'cinemaHall'])->whereBetween('start_time', [$startOfDay, $endOfDay])->get()->groupBy('hall_id');
     
         return response()->json([
             'sessions' => $sessions,
