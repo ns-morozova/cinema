@@ -20,6 +20,7 @@ class MovieSeeder extends Seeder
                 'duration' => 130,
                 'country' => 'Россия',
                 'poster' => 'images/client/poster1.jpg',
+                'color' => '#6C8EA4',
             ],
             [
                 'title' => 'Миссия выполнима',
@@ -27,6 +28,7 @@ class MovieSeeder extends Seeder
                 'duration' => 120,
                 'country' => 'Россия',
                 'poster' => '/images/client/poster2.jpg',
+                'color' => '#A47C6C',
             ],
             [
                 'title' => 'Серая пантера',
@@ -34,6 +36,7 @@ class MovieSeeder extends Seeder
                 'duration' => 90,
                 'country' => 'Россия',
                 'poster' => 'images/client/poster1.jpg',
+                'color' => '#7B9E74',
             ],
             [
                 'title' => 'Движение вбок',
@@ -41,6 +44,7 @@ class MovieSeeder extends Seeder
                 'duration' => 95,
                 'country' => 'Россия',
                 'poster' => 'images/client/poster2.jpg',
+                'color' => '#B78EAA',
             ],
             [
                 'title' => 'Кот Да Винчи',
@@ -48,6 +52,7 @@ class MovieSeeder extends Seeder
                 'duration' => 100,
                 'country' => 'Россия',
                 'poster' => 'images/client/poster1.jpg',
+                'color' => '#A5A97B',
             ],
             [
                 'title' => 'Супергерои будущего',
@@ -55,6 +60,7 @@ class MovieSeeder extends Seeder
                 'duration' => 110,
                 'country' => 'Россия',
                 'poster' => 'images/client/poster2.jpg',
+                'color' => '#8C7BA5',
             ],
             [
                 'title' => 'Тайна старого замка',
@@ -62,6 +68,7 @@ class MovieSeeder extends Seeder
                 'duration' => 105,
                 'country' => 'Россия',
                 'poster' => 'images/client/poster1.jpg',
+                'color' => '#A48D7B',
             ],
             [
                 'title' => 'Путешествие во времени',
@@ -69,6 +76,7 @@ class MovieSeeder extends Seeder
                 'duration' => 115,
                 'country' => 'Россия',
                 'poster' => 'images/client/poster2.jpg',
+                'color' => '#6C9EA4',
             ],
             [
                 'title' => 'Легенда о рыцаре',
@@ -76,6 +84,7 @@ class MovieSeeder extends Seeder
                 'duration' => 125,
                 'country' => 'Россия',
                 'poster' => 'images/client/poster1.jpg',
+                'color' => '#A47B94',
             ],
             [
                 'title' => 'Последний рубеж',
@@ -83,6 +92,7 @@ class MovieSeeder extends Seeder
                 'duration' => 135,
                 'country' => 'Россия',
                 'poster' => 'images/client/poster2.jpg',
+                'color' => '#7B8EA5',
             ],
         ];
 

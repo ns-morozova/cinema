@@ -450,17 +450,19 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
 .conf-step__movies {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start; }
+  align-items: flex-start;
+  gap: 15px;
+}
   .conf-step__movies .conf-step__movie {
     position: relative;
     width: calc((100% - 30px) / 3);
     min-height: 52px;
     padding: 8px 8px 8px 48px;
-    background: #FFEB85;
+    /* background: #FFEB85; */
     border: 1px solid rgba(0, 0, 0, 0.3);
     box-sizing: border-box;
     cursor: pointer; }
-    .conf-step__movies .conf-step__movie:nth-of-type(3n + 2) {
+    /* .conf-step__movies .conf-step__movie:nth-of-type(3n + 2) {
       margin: 0 15px; }
     .conf-step__movies .conf-step__movie:nth-of-type(n + 4) {
       margin-top: 15px; }
@@ -481,7 +483,8 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
     .conf-step__movies .conf-step__movie:nth-of-type(8) {
       background-color: #ff85b1; }
     .conf-step__movies .conf-step__movie:nth-of-type(9) {
-      background-color: #ffa285; }
+      background-color: #ffa285;
+    } */
   .conf-step__movies .conf-step__movie-poster {
     position: absolute;
     top: 0;

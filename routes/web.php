@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
 use App\Models\CinemaHall;
+use App\Models\Movie;
 use App\Models\MovieSession;
 
 Route::controller(ClientController::class)->group(function () {
@@ -46,9 +47,11 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::delete('/cinema-halls/{id}', [CinemaHall::class, 'destroyHall'])
         ->name('admin.cinema-halls.destroy');
 
-        Route::post('/sessions/by-date', [AdminController::class, 'getSessionsByDate'])
+    Route::post('/sessions/by-date', [AdminController::class, 'getSessionsByDate'])
         ->name('admin.sessions.byDate');
 
+    Route::delete('/movies/{id}', [Movie::class, 'destroyMovie'])
+        ->name('admin.movies.destroy');
 });
 
     

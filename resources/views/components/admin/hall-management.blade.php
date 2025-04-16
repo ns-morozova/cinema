@@ -7,8 +7,11 @@
         <ul class="conf-step__list">
             @foreach ($halls as $hall)
                 <li>{{$hall['name']}}
-                    <button class="conf-step__button conf-step__button-trash" data-id="{{ $hall['id'] }}"
-                        data-name="{{ $hall['name'] }}"></button>
+                    <button
+                        class="conf-step__button conf-step__button-trash delete-hall-btn"
+                        data-id="{{ $hall['id'] }}"
+                        data-name="{{ $hall['name'] }}">
+                    </button>
                 </li>
             @endforeach
         </ul>
@@ -75,7 +78,8 @@
         openBtn.addEventListener('click', openModal);
         cancelBtn.addEventListener('click', closeModal);
 
-        document.querySelectorAll('.conf-step__button-trash').forEach(button => {
+        // Открытие модального окна при клике на кнопку удаления
+        document.querySelectorAll('.delete-hall-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const hallId = button.getAttribute('data-id');
                 const hallName = button.getAttribute('data-name');
@@ -87,6 +91,7 @@
             });
         });
 
+        // Отмена удаления
         cancelDeleteBtn.addEventListener('click', () => {
             deleteModal.style.display = 'none';
         });

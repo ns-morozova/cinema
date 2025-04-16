@@ -8,11 +8,18 @@
         </p>
         <div class="conf-step__movies">
             @forelse($movies as $movie)
-                <div class="conf-step__movie">
+                <div class="conf-step__movie relative" style="background-color: {{ $movie->color }}">
                     <img class="conf-step__movie-poster" alt="poster"
                         src="{{ $movie->poster ? asset($movie->poster) : asset('images/admin/poster.png') }}">
                     <h3 class="conf-step__movie-title">{{ $movie->title }}</h3>
                     <p class="conf-step__movie-duration">{{ $movie->duration }} минут</p>
+                    <div class="absolute right-2 bottom-2">
+                        <button
+                            class="conf-step__button conf-step__button-trash delete-movie-btn"
+                             data-id="{{ $movie->id }}"
+                             data-title="{{ $movie->title }}">
+                        </button>
+                    </div>
                 </div>
             @empty
                 <p>Фильмы пока не добавлены.</p>
@@ -68,127 +75,184 @@
     </div>
 </section>
 
+<div id="delete-movie-modal" class="modal" style="display: none;">
+    <div class="modal__overlay"></div>
+    <div class="modal__window">
+        <h3 class="modal__title">Удалить фильм</h3>
+        <p id="delete-movie-text" class="modal__label">Вы уверены, что хотите удалить фильм?</p>
+        <form id="delete-movie-form" method="POST">
+            @csrf
+            @method('DELETE')
+            <div class="modal__actions">
+                <button type="button" id="cancel-delete-movie" class="conf-step__button conf-step__button-regular">Отмена</button>
+                <button type="submit" class="conf-step__button conf-step__button-accent">Удалить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const dateSelector = document.getElementById('date-selector');
-    const toggleBtn = document.getElementById('toggle-dates');
-    const seancesContainer = document.getElementById('seances-container');
-    let showingFirstGroup = true;
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateSelector = document.getElementById('date-selector');
+        const toggleBtn = document.getElementById('toggle-dates');
+        const seancesContainer = document.getElementById('seances-container');
+        let showingFirstGroup = true;
 
-    // Функция для загрузки сеансов через AJAX
-    async function loadSessions(date) {
-    try {
-        const formattedDate = new Date(date).toISOString().split('T')[0]; // Форматируем дату
+        const timelineStart = 9 * 60;   // 9:00 в минутах
+        const timelineEnd = 23 * 60;    // 23:00 в минутах
+        const timelineDuration = timelineEnd - timelineStart; // всего 840 минут
 
-        const response = await fetch('/admin/sessions/by-date', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}', // CSRF-токен для Laravel
-            },
-            body: JSON.stringify({ date: formattedDate }), // Передаем дату в теле запроса
-        });
+        const deleteModalMovie = document.getElementById('delete-movie-modal');
+        const deleteFormMovie = document.getElementById('delete-movie-form');
+        const deleteTextMovie = document.getElementById('delete-movie-text');
+        const cancelDltBtnMovie = document.getElementById('cancel-delete-movie');
 
-        if (!response.ok) {
-            throw new Error(`Ошибка HTTP: ${response.status}`);
+        // Функция для загрузки сеансов через AJAX
+        async function loadSessions(date) {
+            try {
+                const formattedDate = new Date(date).toISOString().split('T')[0]; // Форматируем дату
+
+                const response = await fetch('/admin/sessions/by-date', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // CSRF-токен для Laravel
+                    },
+                    body: JSON.stringify({ date: formattedDate }), // Передаем дату в теле запроса
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Ошибка HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                renderSessions(data.sessions);
+
+            } catch (error) {
+                console.error('Ошибка при загрузке сеансов:', error);
+            }
         }
 
-        const data = await response.json();
-        renderSessions(data.sessions);
+        // Функция для отображения сеансов
+        function renderSessions(sessions) {
+            // Очищаем контейнер сеансов
+            seancesContainer.innerHTML = '';
+            let hallId = 0;
+            let hallSessions = [];
+            let hallDiv = undefined;
+            let hallTitle = undefined;
+            let timelineDiv = undefined;
+            let sessionDiv = undefined;
+            let movieTitle = undefined;
+            let startTime = undefined;
 
-    } catch (error) {
-        console.error('Ошибка при загрузке сеансов:', error);
-    }
-}
+            // Отображаем сеансы для каждого зала
+            @foreach ($halls as $hall)
+                hallId = {{ $hall['id'] }};
+                hallSessions = sessions[hallId] || [];
 
-    // Функция для отображения сеансов
-    function renderSessions(sessions) {
-        // Очищаем контейнер сеансов
-        seancesContainer.innerHTML = '';
-        let hallId = 0;
-        let hallSessions = [];
-        let hallDiv = undefined;
-        let hallTitle = undefined;
-        let timelineDiv = undefined;
-        let sessionDiv = undefined;
-        let movieTitle = undefined;
-        let startTime = undefined;
+                hallDiv = document.createElement('div');
+                hallDiv.classList.add('conf-step__seances-hall');
+                hallDiv.setAttribute('data-hall-id', hallId);
 
-        // Отображаем сеансы для каждого зала
-        @foreach ($halls as $hall)
-            hallId = {{ $hall['id'] }};
-            hallSessions = sessions[hallId] || [];
+                hallTitle = document.createElement('h3');
+                hallTitle.classList.add('conf-step__seances-title');
+                hallTitle.textContent = '{{ $hall['name'] }}';
 
-            hallDiv = document.createElement('div');
-            hallDiv.classList.add('conf-step__seances-hall');
-            hallDiv.setAttribute('data-hall-id', hallId);
+                timelineDiv = document.createElement('div');
+                timelineDiv.classList.add('conf-step__seances-timeline');
 
-            hallTitle = document.createElement('h3');
-            hallTitle.classList.add('conf-step__seances-title');
-            hallTitle.textContent = '{{ $hall['name'] }}';
+                hallSessions.forEach(session => {
+                    const start = new Date(session.start_time);
+                    const end = new Date(session.end_time);
 
-            timelineDiv = document.createElement('div');
-            timelineDiv.classList.add('conf-step__seances-timeline');
+                    const startMinutes = start.getHours() * 60 + start.getMinutes();
+                    const endMinutes = end.getHours() * 60 + end.getMinutes();
+                    const sessionDuration = endMinutes - startMinutes;
 
-            hallSessions.forEach(session => {
-                sessionDiv = document.createElement('div');
-                sessionDiv.classList.add('conf-step__seances-movie');
+                    const leftPercent = ((startMinutes - timelineStart) / timelineDuration) * 100;
+                    const widthPercent = (sessionDuration / timelineDuration) * 100;
 
-                movieTitle = document.createElement('p');
-                movieTitle.classList.add('conf-step__seances-movie-title');
-                movieTitle.textContent = session.movie.title;
+                    sessionDiv = document.createElement('div');
+                    sessionDiv.classList.add('conf-step__seances-movie');
+                    sessionDiv.style.backgroundColor = session.movie.color || '#ccc';
 
-                startTime = document.createElement('p');
-                startTime.classList.add('conf-step__seances-movie-start');
-                startTime.textContent = new Date(session.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    sessionDiv.style.left = `${leftPercent}%`;
+                    sessionDiv.style.width = `${widthPercent}%`;
 
-                sessionDiv.appendChild(movieTitle);
-                sessionDiv.appendChild(startTime);
-                timelineDiv.appendChild(sessionDiv);
-            });
+                    movieTitle = document.createElement('p');
+                    movieTitle.classList.add('conf-step__seances-movie-title');
+                    movieTitle.textContent = session.movie.title;
 
-            hallDiv.appendChild(hallTitle);
-            hallDiv.appendChild(timelineDiv);
-            seancesContainer.appendChild(hallDiv);
-        @endforeach
-    }
+                    startTime = document.createElement('p');
+                    startTime.classList.add('conf-step__seances-movie-start');
+                    startTime.textContent = new Date(session.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    // Обработчик выбора даты
-    dateSelector.addEventListener('change', function (event) {
-        const selectedDate = event.target.value;
-        if (selectedDate) {
-            loadSessions(selectedDate);
+                    sessionDiv.appendChild(movieTitle);
+                    sessionDiv.appendChild(startTime);
+                    timelineDiv.appendChild(sessionDiv);
+                });
+
+                hallDiv.appendChild(hallTitle);
+                hallDiv.appendChild(timelineDiv);
+                seancesContainer.appendChild(hallDiv);
+            @endforeach
         }
-    });
 
-    // Инициализация фильтра при загрузке
-    const checkedDate = document.querySelector('.radio-date:checked')?.value;
-    if (checkedDate) {
-        loadSessions(checkedDate);
-    }
-
-    // Переключение между группами дат
-    toggleBtn.addEventListener('click', function () {
-        const dateOptions = document.querySelectorAll('#date-selector .date-option input');
-        dateOptions.forEach((input, idx) => {
-            const parent = input.closest('.date-option');
-            if (showingFirstGroup) {
-                parent.classList.toggle('hidden', idx < 7);
-            } else {
-                parent.classList.toggle('hidden', idx >= 7);
+        // Обработчик выбора даты
+        dateSelector.addEventListener('change', function (event) {
+            const selectedDate = event.target.value;
+            if (selectedDate) {
+                loadSessions(selectedDate);
             }
         });
-        dateOptions.forEach(input => input.checked = false);
-        if (showingFirstGroup) {
-            dateOptions[7].checked = true;
-            toggleBtn.textContent = '←';
-            loadSessions(dateOptions[7].value);
-        } else {
-            dateOptions[0].checked = true;
-            toggleBtn.textContent = '→';
-            loadSessions(dateOptions[0].value);
+
+        // Инициализация фильтра при загрузке
+        const checkedDate = document.querySelector('.radio-date:checked')?.value;
+        if (checkedDate) {
+            loadSessions(checkedDate);
         }
-        showingFirstGroup = !showingFirstGroup;
+
+        // Переключение между группами дат
+        toggleBtn.addEventListener('click', function () {
+            const dateOptions = document.querySelectorAll('#date-selector .date-option input');
+            dateOptions.forEach((input, idx) => {
+                const parent = input.closest('.date-option');
+                if (showingFirstGroup) {
+                    parent.classList.toggle('hidden', idx < 7);
+                } else {
+                    parent.classList.toggle('hidden', idx >= 7);
+                }
+            });
+            dateOptions.forEach(input => input.checked = false);
+            if (showingFirstGroup) {
+                dateOptions[7].checked = true;
+                toggleBtn.textContent = '←';
+                loadSessions(dateOptions[7].value);
+            } else {
+                dateOptions[0].checked = true;
+                toggleBtn.textContent = '→';
+                loadSessions(dateOptions[0].value);
+            }
+            showingFirstGroup = !showingFirstGroup;
+        });
+
+        // Открытие модального окна при клике на кнопку удаления
+        document.querySelectorAll('.delete-movie-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const movieId = button.getAttribute('data-id');
+                const movieTitle = button.getAttribute('data-title');
+
+                deleteTextMovie.textContent = `Вы уверены, что хотите удалить фильм «${movieTitle}» из базы?`;
+                deleteFormMovie.action = `/admin/movies/${movieId}`;
+
+                deleteModalMovie.style.display = 'block';
+            });
+        });
+
+        // Отмена удаления
+        cancelDltBtnMovie.addEventListener('click', () => {
+            deleteModalMovie.style.display = 'none';
+        });
     });
-});
 </script>
