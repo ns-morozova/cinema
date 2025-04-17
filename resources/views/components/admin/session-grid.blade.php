@@ -4,7 +4,9 @@
     </header>
     <div class="conf-step__wrapper">
         <p class="conf-step__paragraph">
-            <button class="conf-step__button conf-step__button-accent">Добавить фильм</button>
+            <button id="create-movie-btn" class="conf-step__button conf-step__button-accent">
+                Добавить фильм
+            </button>
         </p>
         <div class="conf-step__movies">
             @forelse($movies as $movie)
@@ -27,13 +29,13 @@
         </div>
         <div class="mt-20">
             @php
-use Carbon\Carbon;
-$startDate = Carbon::today();
-$dates = [];
-for ($i = 0; $i < 14; $i++) {
-    $dates[] = $startDate->copy()->addDays($i);
-}
-$weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+                use Carbon\Carbon;
+                $startDate = Carbon::today();
+                $dates = [];
+                for ($i = 0; $i < 14; $i++) {
+                    $dates[] = $startDate->copy()->addDays($i);
+                }
+                $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             @endphp
             <ul class="conf-step__selectors-box selector-date" id="date-selector">
                 @foreach ($dates as $index => $date)
@@ -75,6 +77,41 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
     </div>
 </section>
 
+<div id="create-movie-modal" class="modal" style="display:none;">
+    <div class="modal__overlay"></div>
+    <div class="modal__window">
+        <h3 class="modal__title">Добавить новый фильм</h3>
+        <form id="create-movie-form" action="{{ route('admin.movies.store') }}" method="POST">
+            @csrf
+            <label class="modal__label">Название фильма:
+                <input type="text" name="title" class="modal__input" required>
+            </label>
+            <label class="modal__label">Описание:
+                <input type="text" name="description" class="modal__input" required>
+            </label>
+            <label class="modal__label">Продолжительность, минут:
+                <input type="number" name="duration" class="modal__input" min="1" required>
+            </label>
+            <label class="modal__label">Страна:
+                <input type="text" name="country" class="modal__input" required>
+            </label>
+            <label class="modal__label">Цвет сеанса:
+                <input type="text" name="color" class="modal__input" required>
+            </label>
+            <label class="modal__label">Постер:
+                <input type="text" name="poster" class="modal__input" required>
+            </label>
+
+            <div class="modal__actions">
+                <button type="button" id="cancel-create-movie"
+                    class="conf-step__button conf-step__button-regular">Отмена</button>
+                <button type="submit" id="save-create-movie"
+                    class="conf-step__button conf-step__button-accent">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="delete-movie-modal" class="modal" style="display: none;">
     <div class="modal__overlay"></div>
     <div class="modal__window">
@@ -93,6 +130,39 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const createModalMovie = document.getElementById('create-movie-modal');
+        const createBtnMovie = document.getElementById('create-movie-btn');
+        const cancelBtnMovie = document.getElementById('cancel-create-movie');
+
+        const dltModalMovie = document.getElementById('delete-movie-modal');
+        const dltFormMovie = document.getElementById('delete-movie-form');
+        const dltTextMovie = document.getElementById('delete-movie-text');
+        const cancelDltBtnMovie = document.getElementById('cancel-delete-movie');
+
+        const closeModalMovie = () => createModalMovie.style.display = 'none';
+        const openModalMovie = () => createModalMovie.style.display = 'block';
+
+        createBtnMovie.addEventListener('click', openModalMovie);
+        cancelBtnMovie.addEventListener('click', closeModalMovie);
+
+        // Открытие модального окна при клике на кнопку удаления
+        document.querySelectorAll('.delete-movie-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const movieId = button.getAttribute('data-id');
+                const movieTitle = button.getAttribute('data-title');
+
+                dltTextMovie.textContent = `Вы уверены, что хотите удалить фильм «${movieTitle}» из базы?`;
+                dltFormMovie.action = `/admin/movies/${movieId}`;
+
+                dltModalMovie.style.display = 'block';
+            });
+        });
+
+        // Отмена удаления
+        cancelDltBtnMovie.addEventListener('click', () => {
+            dltModalMovie.style.display = 'none';
+        });
+
         const dateSelector = document.getElementById('date-selector');
         const toggleBtn = document.getElementById('toggle-dates');
         const seancesContainer = document.getElementById('seances-container');
@@ -101,11 +171,6 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
         const timelineStart = 9 * 60;   // 9:00 в минутах
         const timelineEnd = 23 * 60;    // 23:00 в минутах
         const timelineDuration = timelineEnd - timelineStart; // всего 840 минут
-
-        const dltModalMovie = document.getElementById('delete-movie-modal');
-        const dltFormMovie = document.getElementById('delete-movie-form');
-        const dltTextMovie = document.getElementById('delete-movie-text');
-        const cancelDltBtnMovie = document.getElementById('cancel-delete-movie');
 
         // Функция для загрузки сеансов через AJAX
         async function loadSessions(date) {
@@ -237,22 +302,5 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             showingFirstGroup = !showingFirstGroup;
         });
 
-        // Открытие модального окна при клике на кнопку удаления
-        document.querySelectorAll('.delete-movie-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const movieId = button.getAttribute('data-id');
-                const movieTitle = button.getAttribute('data-title');
-
-                dltTextMovie.textContent = `Вы уверены, что хотите удалить фильм «${movieTitle}» из базы?`;
-                dltFormMovie.action = `/admin/movies/${movieId}`;
-
-                dltModalMovie.style.display = 'block';
-            });
-        });
-
-        // Отмена удаления
-        cancelDltBtnMovie.addEventListener('click', () => {
-            dltModalMovie.style.display = 'none';
-        });
     });
 </script>
