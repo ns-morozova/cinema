@@ -27,13 +27,13 @@
         </div>
         <div class="mt-20">
             @php
-                use Carbon\Carbon;
-                $startDate = Carbon::today();
-                $dates = [];
-                for ($i = 0; $i < 14; $i++) {
-                    $dates[] = $startDate->copy()->addDays($i);
-                }
-                $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+use Carbon\Carbon;
+$startDate = Carbon::today();
+$dates = [];
+for ($i = 0; $i < 14; $i++) {
+    $dates[] = $startDate->copy()->addDays($i);
+}
+$weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             @endphp
             <ul class="conf-step__selectors-box selector-date" id="date-selector">
                 @foreach ($dates as $index => $date)
@@ -102,9 +102,9 @@
         const timelineEnd = 23 * 60;    // 23:00 в минутах
         const timelineDuration = timelineEnd - timelineStart; // всего 840 минут
 
-        const deleteModalMovie = document.getElementById('delete-movie-modal');
-        const deleteFormMovie = document.getElementById('delete-movie-form');
-        const deleteTextMovie = document.getElementById('delete-movie-text');
+        const dltModalMovie = document.getElementById('delete-movie-modal');
+        const dltFormMovie = document.getElementById('delete-movie-form');
+        const dltTextMovie = document.getElementById('delete-movie-text');
         const cancelDltBtnMovie = document.getElementById('cancel-delete-movie');
 
         // Функция для загрузки сеансов через AJAX
@@ -243,16 +243,16 @@
                 const movieId = button.getAttribute('data-id');
                 const movieTitle = button.getAttribute('data-title');
 
-                deleteTextMovie.textContent = `Вы уверены, что хотите удалить фильм «${movieTitle}» из базы?`;
-                deleteFormMovie.action = `/admin/movies/${movieId}`;
+                dltTextMovie.textContent = `Вы уверены, что хотите удалить фильм «${movieTitle}» из базы?`;
+                dltFormMovie.action = `/admin/movies/${movieId}`;
 
-                deleteModalMovie.style.display = 'block';
+                dltModalMovie.style.display = 'block';
             });
         });
 
         // Отмена удаления
         cancelDltBtnMovie.addEventListener('click', () => {
-            deleteModalMovie.style.display = 'none';
+            dltModalMovie.style.display = 'none';
         });
     });
 </script>
