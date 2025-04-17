@@ -50,11 +50,11 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::post('/sessions/by-date', [AdminController::class, 'getSessionsByDate'])
         ->name('admin.sessions.byDate');
 
-    Route::delete('/movies/{id}', [Movie::class, 'destroyMovie'])
-        ->name('admin.movies.destroy');
-
     Route::post('/movies/store', [Movie::class, 'store'])
         ->name('admin.movies.store');
+
+    Route::delete('/movies/{id}', [Movie::class, 'destroyMovie'])
+        ->name('admin.movies.destroy');
 });
 
     

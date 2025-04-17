@@ -8,7 +8,7 @@
                 Добавить фильм
             </button>
         </p>
-        <div class="conf-step__movies">
+        <div class="conf-step__movies mt-10">
             @forelse($movies as $movie)
                 <div class="conf-step__movie relative" style="background-color: {{ $movie->color }}">
                     <img class="conf-step__movie-poster" alt="poster"
@@ -62,6 +62,15 @@
                 </li>
             </ul>
         </div>
+
+        <div>
+            <p class="conf-step__paragraph">
+                <button id="create-session-btn" class="conf-step__button conf-step__button-accent">
+                    Добавить сеанс
+                </button>
+            </p>
+        </div>
+
         <div class="conf-step__seances" id="seances-container">
             @foreach ($halls as $hall)
                 <div class="conf-step__seances-hall" data-hall-id="{{ $hall['id'] }}">

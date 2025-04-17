@@ -23,19 +23,21 @@ class MovieSessionSeeder extends Seeder
             return;
         }
 
+        // Удалим все существующие сеансы перед созданием новых
+        MovieSession::truncate();
+
         $startDate = Carbon::today();
 
         for ($day = 0; $day < 14; $day++) {
             $currentDate = $startDate->copy()->addDays($day);
 
             foreach ($halls as $hall) {
-                $sessionStart = $currentDate->copy()->setTime(9, 0); // 9:00 утра
+                $sessionStart = $currentDate->copy()->setTime(9, 0); // Начало дня
 
-                for ($i = 0; $i < 3; $i++) {
+                for ($i = 0; $i < 4; $i++) {
                     $movie = $movies->random();
-                    $duration = $movie->duration;
 
-                    $sessionEnd = $sessionStart->copy()->addMinutes($duration);
+                    $sessionEnd = $sessionStart->copy()->addMinutes($movie->duration);
 
                     MovieSession::create([
                         'movie_id' => $movie->id,
@@ -44,12 +46,12 @@ class MovieSessionSeeder extends Seeder
                         'end_time' => $sessionEnd,
                     ]);
 
-                    // Добавляем 30 минут на перерыв
-                    $sessionStart = $sessionEnd->copy()->addMinutes(30);
+                    // Следующий сеанс — через 3 часа от начала предыдущего
+                    $sessionStart = $sessionStart->copy()->addHours(3);
                 }
             }
         }
 
-        $this->command->info('Сеансы успешно созданы.');
+        $this->command->info('Сеансы успешно созданы на 14 дней вперёд.');
     }
 }
