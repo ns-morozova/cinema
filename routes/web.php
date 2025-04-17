@@ -50,7 +50,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::post('/sessions/by-date', [AdminController::class, 'getSessionsByDate'])
         ->name('admin.sessions.byDate');
 
-    Route::post('/movies/store', [Movie::class, 'store'])
+    Route::post('/movies/store', [AdminController::class, 'storeMovie'])
         ->name('admin.movies.store');
 
     Route::delete('/movies/{id}', [Movie::class, 'destroyMovie'])

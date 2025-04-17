@@ -165,4 +165,27 @@ class AdminController extends Controller
             'sessions' => $sessions,
         ]);
     }
+
+    // Добавление фильма
+    public function storeMovie(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'duration' => 'required|integer|min:1',
+            'country' => 'required|string|max:255',
+            'poster' => 'required|file|mimes:jpeg,jpg,png|max:2048',
+            'color' => 'required|string|max:7',
+        ]);
+
+        if ($request->hasFile('poster')) {
+            $file = $request->file('poster');
+            $path = $file->store('images/client', 'public');
+            $validated['poster'] = 'storage/' . $path;
+        }
+
+        Movie::create($validated);
+
+        return redirect()->route('admin.index')->with('success', 'Фильм успешно создан.');
+    }
 }

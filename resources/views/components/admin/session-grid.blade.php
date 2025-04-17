@@ -90,7 +90,7 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
     <div class="modal__overlay"></div>
     <div class="modal__window">
         <h3 class="modal__title">Добавить новый фильм</h3>
-        <form id="create-movie-form" action="{{ route('admin.movies.store') }}" method="POST">
+        <form id="create-movie-form" action="{{ route('admin.movies.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <label class="modal__label">Название фильма:
                 <input type="text" name="title" class="modal__input" required>
@@ -108,7 +108,7 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
                 <input type="color" name="color" class="modal__input" id="movie-color" value="#B78EAA" required>
             </label>
             <label class="modal__label">Постер:
-                <input type="text" name="poster" class="modal__input" required>
+                <input type="file" name="poster" class="modal__input" accept="image/*" required>
             </label>
 
             <div class="modal__actions">
