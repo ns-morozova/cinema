@@ -29,13 +29,13 @@
         </div>
         <div class="mt-20">
             @php
-                use Carbon\Carbon;
-                $startDate = Carbon::today();
-                $dates = [];
-                for ($i = 0; $i < 14; $i++) {
-                    $dates[] = $startDate->copy()->addDays($i);
-                }
-                $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+use Carbon\Carbon;
+$startDate = Carbon::today();
+$dates = [];
+for ($i = 0; $i < 14; $i++) {
+    $dates[] = $startDate->copy()->addDays($i);
+}
+$weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             @endphp
             <ul class="conf-step__selectors-box selector-date" id="date-selector">
                 @foreach ($dates as $index => $date)
@@ -104,8 +104,8 @@
             <label class="modal__label">Страна:
                 <input type="text" name="country" class="modal__input" required>
             </label>
-            <label class="modal__label">Цвет сеанса:
-                <input type="text" name="color" class="modal__input" required>
+            <label class="modal__label modal__label_color">Цвет в таблице сеансов:
+                <input type="color" name="color" class="modal__input" id="movie-color" value="#B78EAA" required>
             </label>
             <label class="modal__label">Постер:
                 <input type="text" name="poster" class="modal__input" required>
@@ -150,6 +150,12 @@
 
         const closeModalMovie = () => createModalMovie.style.display = 'none';
         const openModalMovie = () => createModalMovie.style.display = 'block';
+
+        const colorInput = document.getElementById('movie-color');
+
+        colorInput.addEventListener('input', function () {
+            this.style.backgroundColor = this.value;
+        });
 
         createBtnMovie.addEventListener('click', openModalMovie);
         cancelBtnMovie.addEventListener('click', closeModalMovie);

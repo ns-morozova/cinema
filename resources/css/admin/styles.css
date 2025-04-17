@@ -498,6 +498,28 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
     font-size: 1.4rem;
     color: rgba(0, 0, 0, 0.7); }
 
+input[type="color"] {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  width: 50px;
+  height: 25px;
+  padding: 0;
+  margin: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
 .conf-step__seances-hall {
   position: relative;
   margin: 35px; }
@@ -710,6 +732,12 @@ textarea.conf-step__input {
     margin-bottom: 15px;
     font-size: 1.6rem;
     color: #000000;
+}
+
+.modal__label_color {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .modal__input {
