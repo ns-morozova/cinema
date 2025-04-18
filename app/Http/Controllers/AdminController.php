@@ -8,6 +8,7 @@ use App\Models\SeatPrice;
 use App\Models\Movie;
 use App\Models\MovieSession;
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class AdminController extends Controller
 {
@@ -187,5 +188,47 @@ class AdminController extends Controller
         Movie::create($validated);
 
         return redirect()->route('admin.index')->with('success', 'Фильм успешно создан.');
+    }
+
+    // Добавление сеанса
+    public function storeSession(Request $request)
+    {
+        $validated = $request->validate([
+            'date' => 'required|string|max:10', // формат YYYY-MM-DD
+            'time' => 'required|string|max:5', // формат HH:MM
+            'movie_id' => 'required|integer|min:1',
+            'hall_id' => 'required|integer|min:1',
+        ]);
+
+        // Собираем start_time из date и time
+        $startTime = Carbon::createFromFormat('Y-m-d H:i', "{$validated['date']} {$validated['time']}");
+
+        // Проверка: есть ли уже сеанс в этом зале в это время
+        $exists = MovieSession::where('hall_id', $validated['hall_id'])
+            ->where('start_time', $startTime)
+            ->exists();
+
+        if ($exists) {
+            throw ValidationException::withMessages([
+                'time' => 'В выбранном зале на это время уже назначен сеанс.',
+            ]);
+        }
+
+        // Получаем продолжительность фильма
+        $movie = Movie::findOrFail($validated['movie_id']);
+        $duration = $movie->duration;
+
+        // Вычисляем end_time
+        $endTime = $startTime->copy()->addMinutes($duration);
+
+        // Создаём сеанс
+        MovieSession::create([
+            'movie_id' => $validated['movie_id'],
+            'hall_id' => $validated['hall_id'],
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+        ]);
+
+        return redirect()->route('admin.index')->with('success', 'Сеанс успешно создан.');
     }
 }

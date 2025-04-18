@@ -29,13 +29,13 @@
         </div>
         <div class="mt-20">
             @php
-use Carbon\Carbon;
-$startDate = Carbon::today();
-$dates = [];
-for ($i = 0; $i < 14; $i++) {
-    $dates[] = $startDate->copy()->addDays($i);
-}
-$weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+                use Carbon\Carbon;
+                $startDate = Carbon::today();
+                $dates = [];
+                for ($i = 0; $i < 14; $i++) {
+                    $dates[] = $startDate->copy()->addDays($i);
+                }
+                $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             @endphp
             <ul class="conf-step__selectors-box selector-date" id="date-selector">
                 @foreach ($dates as $index => $date)
@@ -137,8 +137,62 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
     </div>
 </div>
 
+<div id="create-session-modal" class="modal" style="display:none;">
+    <div class="modal__overlay"></div>
+    <div class="modal__window">
+        <h3 class="modal__title">Добавить сеанс</h3>
+        <form id="create-session-form" action="{{ route('admin.sessions.store') }}" method="POST"
+            enctype="multipart/form-data">
+            @csrf
+            <label class="modal__label">Дата:
+                <input type="hidden" name="date" id="hidden-date">
+                <p id="checked-date" class="text-gray-500 text-md mt-2"></p>
+            </label>
+            <label class="modal__label">Фильм:
+                <select name="movie_id" class="modal__input" required>
+                    <option value="">Выберите фильм</option>
+                    @foreach ($movies as $movie)
+                        <option value="{{ $movie->id }}">{{ $movie->title }}</option>
+                    @endforeach
+                </select>
+            </label>
+
+            <label class="modal__label">Зал:
+                <select name="hall_id" class="modal__input" required>
+                    <option value="">Выберите зал</option>
+                    @foreach ($halls as $hall)
+                        <option value="{{ $hall['id'] }}">{{ $hall['name'] }}</option>
+                    @endforeach
+                </select>
+            </label>
+
+            <label class="modal__label">Время сеанса:
+                <select name="time" class="modal__input" required>
+                    <option value="">Выберите время</option>
+                    <option value="09:00">09:00</option>
+                    <option value="12:00">12:00</option>
+                    <option value="15:00">15:00</option>
+                    <option value="18:00">18:00</option>
+                    <option value="21:00">21:00</option>
+                </select>
+            </label>
+            @error('time')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+            <div class="modal__actions">
+                <button type="button" id="cancel-create-session"
+                    class="conf-step__button conf-step__button-regular">Отмена</button>
+                <button type="submit" id="save-create-session"
+                    class="conf-step__button conf-step__button-accent">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        let selectedDate = undefined;
+
         const createModalMovie = document.getElementById('create-movie-modal');
         const createBtnMovie = document.getElementById('create-movie-btn');
         const cancelBtnMovie = document.getElementById('cancel-create-movie');
@@ -148,8 +202,22 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
         const dltTextMovie = document.getElementById('delete-movie-text');
         const cancelDltBtnMovie = document.getElementById('cancel-delete-movie');
 
+        const createModalSession = document.getElementById('create-session-modal');
+        const createBtnSession = document.getElementById('create-session-btn');
+        const cancelBtnSession = document.getElementById('cancel-create-session');
+
         const closeModalMovie = () => createModalMovie.style.display = 'none';
         const openModalMovie = () => createModalMovie.style.display = 'block';
+
+        const closeModalSession = () => createModalSession.style.display = 'none';
+        const openModalSession = () => { 
+            createModalSession.style.display = 'block';
+            const dateParagraph = document.getElementById('checked-date');
+            if (dateParagraph) {
+                dateParagraph.textContent = selectedDate;
+                document.getElementById('hidden-date').value = selectedDate;
+            }
+        };
 
         const colorInput = document.getElementById('movie-color');
 
@@ -159,6 +227,9 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 
         createBtnMovie.addEventListener('click', openModalMovie);
         cancelBtnMovie.addEventListener('click', closeModalMovie);
+
+        createBtnSession.addEventListener('click', openModalSession);
+        cancelBtnSession.addEventListener('click', closeModalSession);
 
         // Открытие модального окна при клике на кнопку удаления
         document.querySelectorAll('.delete-movie-btn').forEach(button => {
@@ -281,16 +352,16 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 
         // Обработчик выбора даты
         dateSelector.addEventListener('change', function (event) {
-            const selectedDate = event.target.value;
+            selectedDate = event.target.value;
             if (selectedDate) {
                 loadSessions(selectedDate);
             }
         });
 
         // Инициализация фильтра при загрузке
-        const checkedDate = document.querySelector('.radio-date:checked')?.value;
-        if (checkedDate) {
-            loadSessions(checkedDate);
+        selectedDate = document.querySelector('.radio-date:checked')?.value;
+        if (selectedDate) {
+            loadSessions(selectedDate);
         }
 
         // Переключение между группами дат
