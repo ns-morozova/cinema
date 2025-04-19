@@ -79,10 +79,10 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
                 </div>
             @endforeach
         </div>
-        <fieldset class="conf-step__buttons text-center">
+        {{-- <fieldset class="conf-step__buttons text-center">
             <button class="conf-step__button conf-step__button-regular">Отмена</button>
             <input type="submit" value="Сохранить" class="conf-step__button conf-step__button-accent">
-        </fieldset>
+        </fieldset> --}}
     </div>
 </section>
 

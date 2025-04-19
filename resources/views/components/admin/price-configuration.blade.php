@@ -34,7 +34,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const hallSelector = document.getElementById('hall-selector-price');
+        const hallSelectorPrice = document.getElementById('hall-selector-price');
         const priceStandartInput = document.getElementById('price-standart');
         const priceVipInput = document.getElementById('price-vip');
 
@@ -77,7 +77,7 @@
         }
 
         // Обработчик выбора зала
-        hallSelector.addEventListener('change', function (event) {
+        hallSelectorPrice.addEventListener('change', function (event) {
             const selectedHallId = event.target.value;
             if (selectedHallId) {
                 updateHallData(selectedHallId);
