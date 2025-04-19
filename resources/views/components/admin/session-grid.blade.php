@@ -29,13 +29,13 @@
         </div>
         <div class="mt-20">
             @php
-                use Carbon\Carbon;
-                $startDate = Carbon::today();
-                $dates = [];
-                for ($i = 0; $i < 14; $i++) {
-                    $dates[] = $startDate->copy()->addDays($i);
-                }
-                $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+use Carbon\Carbon;
+$startDate = Carbon::today();
+$dates = [];
+for ($i = 0; $i < 14; $i++) {
+    $dates[] = $startDate->copy()->addDays($i);
+}
+$weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             @endphp
             <ul class="conf-step__selectors-box selector-date" id="date-selector">
                 @foreach ($dates as $index => $date)
@@ -141,8 +141,7 @@
     <div class="modal__overlay"></div>
     <div class="modal__window">
         <h3 class="modal__title">Добавить сеанс</h3>
-        <form id="create-session-form" action="{{ route('admin.sessions.store') }}" method="POST"
-            enctype="multipart/form-data">
+        <form id="create-session-form" action="{{ route('admin.sessions.store') }}" method="POST">
             @csrf
             <label class="modal__label">Дата:
                 <input type="hidden" name="date" id="hidden-date">
@@ -156,7 +155,6 @@
                     @endforeach
                 </select>
             </label>
-
             <label class="modal__label">Зал:
                 <select name="hall_id" class="modal__input" required>
                     <option value="">Выберите зал</option>
@@ -165,7 +163,6 @@
                     @endforeach
                 </select>
             </label>
-
             <label class="modal__label">Время сеанса:
                 <select name="time" class="modal__input" required>
                     <option value="">Выберите время</option>
@@ -176,9 +173,7 @@
                     <option value="21:00">21:00</option>
                 </select>
             </label>
-            @error('time')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
+            <div id="session-error" class="text-red-500 text-xl mt-1"></div>
             <div class="modal__actions">
                 <button type="button" id="cancel-create-session"
                     class="conf-step__button conf-step__button-regular">Отмена</button>
@@ -349,6 +344,47 @@
                 seancesContainer.appendChild(hallDiv);
             @endforeach
         }
+
+        // Обработчик записи нового сеанса в БД
+        document.getElementById('create-session-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const form = this;
+            const formData = new FormData(form);
+            const url = form.getAttribute('action');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Успешно добавлено, обновляем сетку сеансов
+                    loadSessions(document.querySelector('.radio-date:checked').value);
+                    form.reset();
+                    closeModalSession();
+                    alert('Сеанс успешно создан.');
+                } else {
+                    // Обработка ошибок
+                    const errorDiv = document.getElementById('session-error');
+                    errorDiv.textContent = result.message || 'Произошла ошибка при создании сеанса.';
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке данных:', error);
+                const errorDiv = document.getElementById('session-error');
+                errorDiv.textContent = 'В это время уже добавлен сеанс.';
+            }
+        });
 
         // Обработчик выбора даты
         dateSelector.addEventListener('change', function (event) {
