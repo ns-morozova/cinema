@@ -29,13 +29,13 @@
         </div>
         <div class="mt-20">
             @php
-use Carbon\Carbon;
-$startDate = Carbon::today();
-$dates = [];
-for ($i = 0; $i < 14; $i++) {
-    $dates[] = $startDate->copy()->addDays($i);
-}
-$weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+                use Carbon\Carbon;
+                $startDate = Carbon::today();
+                $dates = [];
+                for ($i = 0; $i < 14; $i++) {
+                    $dates[] = $startDate->copy()->addDays($i);
+                }
+                $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             @endphp
             <ul class="conf-step__selectors-box selector-date" id="date-selector">
                 @foreach ($dates as $index => $date)
@@ -184,6 +184,22 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
     </div>
 </div>
 
+<div id="delete-session-modal" class="modal" style="display: none;">
+    <div class="modal__overlay"></div>
+    <div class="modal__window">
+        <h3 class="modal__title">Удалить сеанс</h3>
+        <p id="delete-session-text" class="modal__label">Вы уверены, что хотите удалить сеанс?</p>
+        <form id="delete-session-form" method="POST">
+            @csrf
+            @method('DELETE')
+            <div class="modal__actions">
+                <button type="button" id="cancel-delete-session" class="conf-step__button conf-step__button-regular">Отмена</button>
+                <button type="submit" class="conf-step__button conf-step__button-accent">Удалить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         let selectedDate = undefined;
@@ -200,6 +216,11 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
         const createModalSession = document.getElementById('create-session-modal');
         const createBtnSession = document.getElementById('create-session-btn');
         const cancelBtnSession = document.getElementById('cancel-create-session');
+
+        const dltModalSession = document.getElementById('delete-session-modal');
+        const dltFormSession = document.getElementById('delete-session-form');
+        const dltTextSession = document.getElementById('delete-session-text');
+        const cancelDltBtnSession = document.getElementById('cancel-delete-session');
 
         const closeModalMovie = () => createModalMovie.style.display = 'none';
         const openModalMovie = () => createModalMovie.style.display = 'block';
@@ -226,7 +247,7 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
         createBtnSession.addEventListener('click', openModalSession);
         cancelBtnSession.addEventListener('click', closeModalSession);
 
-        // Открытие модального окна при клике на кнопку удаления
+        // Открытие модального окна при клике на кнопку удаления фильма
         document.querySelectorAll('.delete-movie-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const movieId = button.getAttribute('data-id');
@@ -239,7 +260,7 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             });
         });
 
-        // Отмена удаления
+        // Отмена удаления фильма
         cancelDltBtnMovie.addEventListener('click', () => {
             dltModalMovie.style.display = 'none';
         });
@@ -325,6 +346,7 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 
                     sessionDiv.style.left = `${leftPercent}%`;
                     sessionDiv.style.width = `${widthPercent}%`;
+                    sessionDiv.setAttribute('data-session-id', session.id);
 
                     movieTitle = document.createElement('p');
                     movieTitle.classList.add('conf-step__seances-movie-title');
@@ -334,8 +356,18 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
                     startTime.classList.add('conf-step__seances-movie-start');
                     startTime.textContent = new Date(session.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+                    const deleteButtonDiv = document.createElement('div');
+                    deleteButtonDiv.classList.add('absolute', 'right-2', 'bottom-2');
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.classList.add('conf-step__button', 'conf-step__button-trash', 'delete-session-btn');
+                    deleteButton.setAttribute('data-id', session.id);
+                    deleteButton.setAttribute('data-title', session.movie.title);
+
+                    deleteButtonDiv.appendChild(deleteButton);
                     sessionDiv.appendChild(movieTitle);
                     sessionDiv.appendChild(startTime);
+                    sessionDiv.appendChild(deleteButtonDiv);
                     timelineDiv.appendChild(sessionDiv);
                 });
 
@@ -384,6 +416,58 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
                 const errorDiv = document.getElementById('session-error');
                 errorDiv.textContent = 'В это время уже добавлен сеанс.';
             }
+        });
+
+        // Открытие модального окна при клике на кнопку удаления сеанса
+        seancesContainer.addEventListener('click', function (event) {
+            const button = event.target.closest('.delete-session-btn');
+            if (button) {
+                const sessionId = button.getAttribute('data-id');
+                const sessionTitle = button.getAttribute('data-title');
+                dltTextSession.textContent = `Вы уверены, что хотите удалить сеанс «${sessionTitle}» из базы?`;
+                dltFormSession.action = `/admin/sessions/${sessionId}`;
+                dltModalSession.style.display = 'block';
+            }
+        });
+
+        // Обработка удаления сеанса через AJAX
+        document.getElementById('delete-session-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const form = this;
+            const url = form.getAttribute('action');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Успешно удалено, обновляем сетку сеансов
+                    loadSessions(document.querySelector('.radio-date:checked').value);
+                    dltModalSession.style.display = 'none';
+                    alert('Сеанс успешно удален.');
+                } else {
+                    alert(result.message || 'Произошла ошибка при удалении сеанса.');
+                }
+            } catch (error) {
+                console.error('Ошибка при удалении сеанса:', error);
+                alert('Возникла ошибка. Попробуйте снова.');
+            }
+        });
+
+        // Отмена удаления сеанса
+        cancelDltBtnSession.addEventListener('click', () => {
+            dltModalSession.style.display = 'none';
         });
 
         // Обработчик выбора даты

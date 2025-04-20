@@ -58,6 +58,9 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/sessions/store', [AdminController::class, 'storeSession'])
         ->name('admin.sessions.store');
+
+    Route::delete('/sessions/{id}', [MovieSession::class, 'destroySession'])
+        ->name('admin.sessions.destroy');
 });
 
     

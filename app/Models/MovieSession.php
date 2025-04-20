@@ -45,4 +45,23 @@ class MovieSession extends Model
             'html' => view('admin.session-timeline', compact('halls', 'movieSessions', 'date'))->render(),
         ]);
     }
+
+    // Удаление сеанса
+    public function destroySession($id)
+    {
+        try {
+            $session = MovieSession::findOrFail($id);
+            $session->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Сеанс успешно удален.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
