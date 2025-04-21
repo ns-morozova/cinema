@@ -3,11 +3,11 @@
         <h2 class="conf-step__title">Открыть продажи</h2>
     </header>
     <div class="conf-step__wrapper text-center">
-        <p class="conf-step__paragraph">Всё готово, теперь можно:</p>
+        {{-- <p class="conf-step__paragraph">Всё готово, теперь можно:</p> --}}
 
-        <div class="conf-step__wrapper">
-            <p class="conf-step__paragraph">Выберите зал для открытия продаж:</p>
-            <ul class="conf-step__selectors-box" id="hall-selector-sales">
+        <div>
+            <p class="conf-step__paragraph">Выберите зал для действия:</p>
+            <ul class="conf-step__selectors-box mt-10" id="hall-selector-sales">
                 @foreach ($halls as $hall)
                     <li>
                         <input type="radio" class="conf-step__radio hall-selector-sales" name="sales-hall" value="{{ $hall['id'] }}"

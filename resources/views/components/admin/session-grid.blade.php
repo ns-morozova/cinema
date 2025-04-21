@@ -29,13 +29,13 @@
         </div>
         <div class="mt-20">
             @php
-                use Carbon\Carbon;
-                $startDate = Carbon::today();
-                $dates = [];
-                for ($i = 0; $i < 14; $i++) {
-                    $dates[] = $startDate->copy()->addDays($i);
-                }
-                $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+use Carbon\Carbon;
+$startDate = Carbon::today();
+$dates = [];
+for ($i = 0; $i < 14; $i++) {
+    $dates[] = $startDate->copy()->addDays($i);
+}
+$weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             @endphp
             <ul class="conf-step__selectors-box selector-date" id="date-selector">
                 @foreach ($dates as $index => $date)
@@ -357,10 +357,10 @@
                     startTime.textContent = new Date(session.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                     const deleteButtonDiv = document.createElement('div');
-                    deleteButtonDiv.classList.add('absolute', 'right-2', 'bottom-2');
+                    deleteButtonDiv.classList.add('absolute', 'right-1', 'bottom-1');
 
                     const deleteButton = document.createElement('button');
-                    deleteButton.classList.add('conf-step__button', 'conf-step__button-trash', 'delete-session-btn');
+                    deleteButton.classList.add('conf-step__button', 'conf-step__button-trash-session', 'delete-session-btn');
                     deleteButton.setAttribute('data-id', session.id);
                     deleteButton.setAttribute('data-title', session.movie.title);
 
