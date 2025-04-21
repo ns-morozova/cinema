@@ -61,6 +61,9 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     Route::delete('/sessions/{id}', [MovieSession::class, 'destroySession'])
         ->name('admin.sessions.destroy');
+
+    Route::post('/halls/{id}/toggle-enabled', [CinemaHall::class, 'toggleEnabled'])
+        ->name('admin.halls.toggleEnabled');
 });
 
     

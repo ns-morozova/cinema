@@ -21,6 +21,7 @@ class AdminController extends Controller
                 'name' => $hall->name,
                 'rows' => $hall->rows,
                 'seats_per_row' => $hall->seats_per_row,
+                'enabled' => $hall->enabled,
             ];
         })->toArray();
 
@@ -241,9 +242,5 @@ class AdminController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
-
-        
-
-        // return redirect()->route('admin.index')->with('success', 'Сеанс успешно создан.');
     }
 }
