@@ -29,13 +29,13 @@
         </div>
         <div class="mt-20">
             @php
-use Carbon\Carbon;
-$startDate = Carbon::today();
-$dates = [];
-for ($i = 0; $i < 14; $i++) {
-    $dates[] = $startDate->copy()->addDays($i);
-}
-$weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+                use Carbon\Carbon;
+                $startDate = Carbon::today();
+                $dates = [];
+                for ($i = 0; $i < 14; $i++) {
+                    $dates[] = $startDate->copy()->addDays($i);
+                }
+                $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             @endphp
             <ul class="conf-step__selectors-box selector-date" id="date-selector">
                 @foreach ($dates as $index => $date)
@@ -149,7 +149,7 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             </label>
             <label class="modal__label">Фильм:
                 <select name="movie_id" class="modal__input" required>
-                    <option value="">Выберите фильм</option>
+                    <option value="" disabled selected>Выберите фильм</option>
                     @foreach ($movies as $movie)
                         <option value="{{ $movie->id }}">{{ $movie->title }}</option>
                     @endforeach
@@ -157,7 +157,7 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             </label>
             <label class="modal__label">Зал:
                 <select name="hall_id" class="modal__input" required>
-                    <option value="">Выберите зал</option>
+                    <option value="" disabled selected>Выберите зал</option>
                     @foreach ($halls as $hall)
                         <option value="{{ $hall['id'] }}">{{ $hall['name'] }}</option>
                     @endforeach
@@ -165,7 +165,7 @@ $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             </label>
             <label class="modal__label">Время сеанса:
                 <select name="time" class="modal__input" required>
-                    <option value="">Выберите время</option>
+                    <option value="" disabled selected>Выберите время</option>
                     <option value="09:00">09:00</option>
                     <option value="12:00">12:00</option>
                     <option value="15:00">15:00</option>
