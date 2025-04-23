@@ -1,4 +1,4 @@
-<section class="movie">
+<div class="movie">
     <div class="movie__info">
         <div class="movie__poster">
             <img class="movie__poster-image" alt="{{ $title }} постер" src="{{ asset($poster) }}">
@@ -25,4 +25,4 @@
             </ul>
         </div>
     @endforeach
-</section>
+</div>

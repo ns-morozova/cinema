@@ -13,6 +13,9 @@ Route::controller(ClientController::class)->group(function () {
     Route::get('/hall', 'hall')->name('client.hall');
     Route::get('/payment', 'payment')->name('client.payment');
     Route::get('/ticket', 'ticket')->name('client.ticket');
+
+    Route::post('client/sessions/by-date', [ClientController::class, 'getSessionsByDate'])
+        ->name('client.sessions.byDate');
 });
 
 Route::get('/dashboard', function () {
