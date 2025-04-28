@@ -20,6 +20,7 @@ class AdminController extends Controller
                 'name' => $hall->name,
                 'rows' => $hall->rows,
                 'seats_per_row' => $hall->seats_per_row,
+                'enabled' => $hall->enabled,
             ];
         })->toArray();
 
@@ -153,21 +154,92 @@ class AdminController extends Controller
     public function getSessionsByDate(Request $request)
     {
         // Получаем дату из тела запроса
-        $date = $request->input('date');
-    
-        // Проверяем формат даты
-        // if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-        //     return response()->json(['error' => 'Некорректный формат даты'], 400);
-        // }
-    
+        $date = Carbon::parse($request->input('date'));
+
+        $startOfDay = $date->copy()->startOfDay();
+        $endOfDay = $date->copy()->endOfDay();
+
         // Логика получения сеансов за указанную дату
-        $sessions = MovieSession::whereDate('start_time', $date)
-            ->with(['movie', 'hall'])
-            ->get()
-            ->groupBy('hall_id');
+        $sessions = MovieSession::with(['movie', 'cinemaHall'])->whereBetween('start_time', [$startOfDay, $endOfDay])->get()->groupBy('hall_id');
     
         return response()->json([
             'sessions' => $sessions,
         ]);
+    }
+    
+    // Добавление фильма
+    public function storeMovie(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'duration' => 'required|integer|min:1',
+            'country' => 'required|string|max:255',
+            'poster' => 'required|file|mimes:jpeg,jpg,png|max:2048',
+            'color' => 'required|string|max:7',
+        ]);
+
+        if ($request->hasFile('poster')) {
+            $file = $request->file('poster');
+            $path = $file->store('images/client', 'public');
+            $validated['poster'] = 'storage/' . $path;
+        }
+
+        Movie::create($validated);
+
+        return redirect()->route('admin.index')->with('success', 'Фильм успешно создан.');
+    }
+
+    // Добавление сеанса
+    public function storeSession(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'date' => 'required|string|max:10', // формат YYYY-MM-DD
+                'time' => 'required|string|max:5', // формат HH:MM
+                'movie_id' => 'required|integer|min:1',
+                'hall_id' => 'required|integer|min:1',
+            ]);
+
+            // Собираем start_time из date и time
+            $startTime = Carbon::createFromFormat('Y-m-d H:i', "{$validated['date']} {$validated['time']}");
+
+            // Проверка: есть ли уже сеанс в этом зале в это время
+            $exists = MovieSession::where('hall_id', $validated['hall_id'])
+                ->where('start_time', $startTime)
+                ->exists();
+
+            if ($exists) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'В выбранном зале на это время уже назначен сеанс.',
+                ], 422);
+            }
+
+            // Получаем продолжительность фильма
+            $movie = Movie::findOrFail($validated['movie_id']);
+            $duration = $movie->duration;
+
+            // Вычисляем end_time
+            $endTime = $startTime->copy()->addMinutes($duration);
+
+            // Создаём сеанс
+            MovieSession::create([
+                'movie_id' => $validated['movie_id'],
+                'hall_id' => $validated['hall_id'],
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Сеанс успешно создан.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

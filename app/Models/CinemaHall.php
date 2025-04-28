@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\Enums\SeatType;
+use App\Models\MovieSession;
 
 class CinemaHall extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'rows', 'seats_per_row'];
+    protected $fillable = ['name', 'rows', 'seats_per_row', 'enabled'];
 
     protected $table = 'cinema_halls';
 
@@ -81,6 +82,27 @@ class CinemaHall extends Model
     public function seatPrices()
     {
         return $this->hasMany(SeatPrice::class, 'hall_id');
-    }    
+    }
+    
+    // Открытие/приостановка продаж в зале
+    public function toggleEnabled(Request $request, $id)
+    {
+        try {
+        
+            $hall = CinemaHall::findOrFail($id);
+            $newEnabledState = $request->input('enabled', false);
+            $hall->update(['enabled' => $newEnabledState]);
+
+            return response()->json([
+                'success' => true,
+                'message' => $newEnabledState ? 'Продажи открыты.' : 'Продажи приостановлены.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
 }

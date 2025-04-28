@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
 use App\Models\CinemaHall;
+use App\Models\Movie;
 use App\Models\MovieSession;
 
 Route::controller(ClientController::class)->group(function () {
@@ -12,6 +13,9 @@ Route::controller(ClientController::class)->group(function () {
     Route::get('/hall', 'hall')->name('client.hall');
     Route::get('/payment', 'payment')->name('client.payment');
     Route::get('/ticket', 'ticket')->name('client.ticket');
+
+    Route::post('client/sessions/by-date', [ClientController::class, 'getSessionsByDate'])
+        ->name('client.sessions.byDate');
 });
 
 Route::get('/dashboard', function () {
@@ -46,9 +50,23 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::delete('/cinema-halls/{id}', [CinemaHall::class, 'destroyHall'])
         ->name('admin.cinema-halls.destroy');
 
-        Route::post('/sessions/by-date', [AdminController::class, 'getSessionsByDate'])
+    Route::post('/sessions/by-date', [AdminController::class, 'getSessionsByDate'])
         ->name('admin.sessions.byDate');
 
+    Route::post('/movies/store', [AdminController::class, 'storeMovie'])
+        ->name('admin.movies.store');
+
+    Route::delete('/movies/{id}', [Movie::class, 'destroyMovie'])
+        ->name('admin.movies.destroy');
+
+    Route::post('/sessions/store', [AdminController::class, 'storeSession'])
+        ->name('admin.sessions.store');
+
+    Route::delete('/sessions/{id}', [MovieSession::class, 'destroySession'])
+        ->name('admin.sessions.destroy');
+
+    Route::post('/halls/{id}/toggle-enabled', [CinemaHall::class, 'toggleEnabled'])
+        ->name('admin.halls.toggleEnabled');
 });
 
     

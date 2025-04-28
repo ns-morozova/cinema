@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('rows')->unsigned(); // Количество рядов
             $table->integer('seats_per_row')->unsigned(); // Количество мест в ряду
             $table->timestamps();
+            $table->boolean('enabled')->default(false);
         });
     }
 

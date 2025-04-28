@@ -224,20 +224,56 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
   position: relative;
   width: 20px;
   height: 20px;
-  vertical-align: text-top; }
-  .conf-step__button-trash::before {
-    content: '';
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    width: 12px;
-    height: 12px;
-    background-image: url("/images/admin/trash-sprite.png");
-    background-position: 0 0;
-    background-size: 24px 12px;
-    background-repeat: no-repeat; }
-  .conf-step__button-trash:active::before {
-    background-position: -12px 0; }
+  vertical-align: text-top;
+}
+.conf-step__button-trash::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 12px;
+  height: 12px;
+  background-image: url("/images/admin/trash-sprite.png");
+  background-position: 0 0;
+  background-size: 24px 12px;
+  background-repeat: no-repeat;
+}
+.conf-step__button-trash:active::before {
+  background-position: -12px 0;
+}
+
+.delete-movie-btn {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.delete-movie-btn:hover {
+  background-color: rgba(238, 234, 241, 0.5);
+}
+
+.conf-step__button-trash-session {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  vertical-align: text-top;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.conf-step__button-trash-session:hover {
+  background-color: rgba(238, 234, 241, 0.5);
+}
+.conf-step__button-trash-session::before {
+  content: '';
+  position: absolute;
+  top: 2.4px;
+  left: 2.4px;
+  width: 7.2px;
+  height: 7.2px;
+  background-image: url("/images/admin/trash-sprite.png");
+  background-position: 0 0;
+  background-size: 14.4px 7.2px;
+  background-repeat: no-repeat;
+}
+.conf-step__button-trash-session:active::before {
+  background-position: -7.2px 0;
+}
 
 .conf-step__legend {
   color: #848484;
@@ -450,17 +486,19 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
 .conf-step__movies {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start; }
+  align-items: flex-start;
+  gap: 15px;
+}
   .conf-step__movies .conf-step__movie {
     position: relative;
     width: calc((100% - 30px) / 3);
     min-height: 52px;
     padding: 8px 8px 8px 48px;
-    background: #FFEB85;
+    /* background: #FFEB85; */
     border: 1px solid rgba(0, 0, 0, 0.3);
     box-sizing: border-box;
     cursor: pointer; }
-    .conf-step__movies .conf-step__movie:nth-of-type(3n + 2) {
+    /* .conf-step__movies .conf-step__movie:nth-of-type(3n + 2) {
       margin: 0 15px; }
     .conf-step__movies .conf-step__movie:nth-of-type(n + 4) {
       margin-top: 15px; }
@@ -481,7 +519,8 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
     .conf-step__movies .conf-step__movie:nth-of-type(8) {
       background-color: #ff85b1; }
     .conf-step__movies .conf-step__movie:nth-of-type(9) {
-      background-color: #ffa285; }
+      background-color: #ffa285;
+    } */
   .conf-step__movies .conf-step__movie-poster {
     position: absolute;
     top: 0;
@@ -494,6 +533,28 @@ input[type='radio'], input[type='submit'], button, .conf-step__header, select {
   .conf-step__movies .conf-step__movie-duration {
     font-size: 1.4rem;
     color: rgba(0, 0, 0, 0.7); }
+
+input[type="color"] {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  width: 50px;
+  height: 25px;
+  padding: 0;
+  margin: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
 
 .conf-step__seances-hall {
   position: relative;
@@ -707,6 +768,12 @@ textarea.conf-step__input {
     margin-bottom: 15px;
     font-size: 1.6rem;
     color: #000000;
+}
+
+.modal__label_color {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .modal__input {

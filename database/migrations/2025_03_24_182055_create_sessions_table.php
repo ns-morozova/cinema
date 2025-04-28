@@ -18,6 +18,7 @@ return new class extends Migration
             $table->dateTime('start_time'); // Время начала сеанса
             $table->dateTime('end_time'); // Время окончания сеанса
             $table->timestamps();
+            $table->unique(['hall_id', 'start_time'], 'unique_session_per_hall_time');
         });
      }
 
@@ -26,6 +27,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('movie_sessions', function (Blueprint $table) {
+            $table->dropUnique('unique_session_per_hall_time');
+        });
+        
         Schema::dropIfExists('movie_sessions');
     }
 };

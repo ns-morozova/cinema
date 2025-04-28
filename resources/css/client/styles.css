@@ -419,6 +419,99 @@ body {
   height: 20rem;
 }
 
+ .conf-step__selectors-box {
+  font-size: 0;
+  list-style: none;
+  margin-bottom: 15px; }
+  .conf-step__selectors-box li {
+    position: relative;
+    display: inline-block;
+    font-size: 1.2rem; }
+  .conf-step__selectors-box .conf-step__radio {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    width: 80px;
+    height: 42px;
+    opacity: 0; }
+  .conf-step__selectors-box .conf-step__selector {
+    position: relative;
+    display: block;
+    padding: 13px 21px;
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.24), 0px 0px 3px rgba(0, 0, 0, 0.12);
+    border-radius: 3px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 1.4rem;
+    transition-property: background-color;
+    transition-duration: .5s;
+    transition-timing-function: ease;
+    z-index: 5; }
+  .conf-step__selectors-box .conf-step__radio:checked + .conf-step__selector {
+    background-color: #FFFFFF;
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.24), 0px 2px 2px rgba(0, 0, 0, 0.24), 0px 0px 2px rgba(0, 0, 0, 0.12);
+    transform: scale(1.1);
+    font-weight: 900;
+    font-size: 1.4rem;
+    z-index: 10; }
+  .conf-step__selectors-box .conf-step__radio:hover + .conf-step__selector {
+    background-color: rgba(255, 255, 255, 0.9); }
+
+.hidden {
+    display: none !important;
+}
+
+.selector-date-client {
+  display: flex;
+  justify-content: space-between;
+  background: none;
+}
+
+.date-option {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 3px;
+}
+
+.radio-date {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.button-arrow {
+  min-width: 50px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-basis: calc(100% / 8);
+  content: '>';
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 2.4rem;
+  padding: 1rem;
+  /* background: rgba(255, 255, 255, 0.9); */
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.24), 0px 0px 2px rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+  text-decoration: none;
+  text-align: center;
+  color: #000000;
+  margin-left: 1px;
+  cursor: pointer;
+}
+
+.button-arrow:hover, .button-arrow:focus {
+  background-color: #FFFFFF !important;
+  transition-property: background-color;
+  transition-duration: .5s;
+  transition-timing-function: ease;
+}
+
 @media screen and (min-width: 479px) {
   .page-nav .page-nav__day {
     padding: 1rem 2rem;

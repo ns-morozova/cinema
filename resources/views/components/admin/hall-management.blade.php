@@ -7,8 +7,11 @@
         <ul class="conf-step__list">
             @foreach ($halls as $hall)
                 <li>{{$hall['name']}}
-                    <button class="conf-step__button conf-step__button-trash" data-id="{{ $hall['id'] }}"
-                        data-name="{{ $hall['name'] }}"></button>
+                    <button
+                        class="conf-step__button conf-step__button-trash delete-hall-btn"
+                        data-id="{{ $hall['id'] }}"
+                        data-name="{{ $hall['name'] }}">
+                    </button>
                 </li>
             @endforeach
         </ul>
@@ -60,35 +63,37 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const modal = document.getElementById('create-hall-modal');
-        const openBtn = document.getElementById('create-hall-btn');
-        const cancelBtn = document.getElementById('cancel-create-hall');
+        const createModalHall = document.getElementById('create-hall-modal');
+        const createBtnHall = document.getElementById('create-hall-btn');
+        const cancelBtnHall = document.getElementById('cancel-create-hall');
 
-        const deleteModal = document.getElementById('delete-hall-modal');
-        const deleteForm = document.getElementById('delete-hall-form');
-        const deleteText = document.getElementById('delete-hall-text');
-        const cancelDeleteBtn = document.getElementById('cancel-delete-hall');
+        const dltModalHall = document.getElementById('delete-hall-modal');
+        const dltFormHall = document.getElementById('delete-hall-form');
+        const dltTextHall = document.getElementById('delete-hall-text');
+        const cancelDltBtn = document.getElementById('cancel-delete-hall');
 
-        const closeModal = () => modal.style.display = 'none';
-        const openModal = () => modal.style.display = 'block';
+        const closeModalHall = () => createModalHall.style.display = 'none';
+        const openModalHall = () => createModalHall.style.display = 'block';
 
-        openBtn.addEventListener('click', openModal);
-        cancelBtn.addEventListener('click', closeModal);
+        createBtnHall.addEventListener('click', openModalHall);
+        cancelBtnHall.addEventListener('click', closeModalHall);
 
-        document.querySelectorAll('.conf-step__button-trash').forEach(button => {
+        // Открытие модального окна при клике на кнопку удаления
+        document.querySelectorAll('.delete-hall-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const hallId = button.getAttribute('data-id');
                 const hallName = button.getAttribute('data-name');
 
-                deleteText.textContent = `Вы уверены, что хотите удалить зал «${hallName}»?`;
-                deleteForm.action = `/admin/cinema-halls/${hallId}`;
+                dltTextHall.textContent = `Вы уверены, что хотите удалить зал «${hallName}»?`;
+                dltFormHall.action = `/admin/cinema-halls/${hallId}`;
 
-                deleteModal.style.display = 'block';
+                dltModalHall.style.display = 'block';
             });
         });
 
-        cancelDeleteBtn.addEventListener('click', () => {
-            deleteModal.style.display = 'none';
+        // Отмена удаления
+        cancelDltBtn.addEventListener('click', () => {
+            dltModalHall.style.display = 'none';
         });
     });
 </script>

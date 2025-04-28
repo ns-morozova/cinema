@@ -4,10 +4,10 @@
     </header>
     <div class="conf-step__wrapper">
         <p class="conf-step__paragraph">Выберите зал для конфигурации:</p>
-        <ul class="conf-step__selectors-box" id="hall-selector">
+        <ul class="conf-step__selectors-box" id="hall-selector-conf">
             @foreach ($halls as $hall)
                 <li>
-                    <input type="radio" class="conf-step__radio" name="chairs-hall" value="{{ $hall['id'] }}" data-id="{{ $hall['id'] }}">
+                    <input type="radio" class="conf-step__radio hall-selector-conf" name="chairs-hall" value="{{ $hall['id'] }}" data-id="{{ $hall['id'] }}">
                     <span class="conf-step__selector">{{ $hall['name'] }}</span>
                 </li>
             @endforeach
@@ -38,7 +38,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const hallSelector = document.getElementById('hall-selector');
+        const hallSelector = document.getElementById('hall-selector-conf');
         const rowsInput = document.getElementById('rows');
         const seatsPerRowInput = document.getElementById('seats-per-row');
         const hallLayout = document.getElementById('hall-layout');
@@ -124,7 +124,7 @@
         });
 
         // Инициализация первого зала
-        const firstHallRadio = document.querySelector('#hall-selector input[type="radio"]');
+        const firstHallRadio = hallSelector.querySelector('.hall-selector-conf');
         if (firstHallRadio) {
             firstHallRadio.checked = true;
             updateHallData(firstHallRadio.value);
@@ -149,7 +149,7 @@
         document.getElementById('save-configuration').addEventListener('click', async (e) => {
             e.preventDefault();
 
-            const hallId = document.querySelector('#hall-selector input[type="radio"]:checked')?.value;
+            const hallId = document.querySelector('#hall-selector-conf input[type="radio"]:checked')?.value;
             if (!hallId) return;
 
             try {
