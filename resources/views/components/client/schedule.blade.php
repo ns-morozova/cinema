@@ -101,11 +101,15 @@
                     <div class="movie-seances__hall">
                         <h3 class="movie-seances__hall-title">${hallName}</h3>
                         <ul class="movie-seances__list">
-                            ${times.map(time => `
+
+                            ${times.map(timeHoll => `
                                 <li class="movie-seances__time-block">
-                                    <a class="movie-seances__time" href="/hall">${time}</a>
-                                </li>
-                            `).join('')}
+                                    <a class="movie-seances__time" 
+                                    href="/hall?date=${movie.formattedDate}&time=${timeHoll.time}&hall_id=${timeHoll.hall_id}">
+                                        ${timeHoll.time}
+                                    </a>
+                                </li>`
+                            ).join('')}                            
                         </ul>
                     </div>
                 `)
