@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\SeatType;
 use App\Models\Ticket;
+use App\Models\CinemaHall;
+use App\Models\SeatPrice;
 
 class Seat extends Model
 {
@@ -26,6 +28,13 @@ class Seat extends Model
 public function ticket()
 {
     return $this->hasOne(Ticket::class, 'seat_id');
+}
+
+// Связь с ценой
+public function price()
+{
+    return $this->hasOne(SeatPrice::class, 'seat_type', 'type')
+        ->where('hall_id', $this->hall_id);
 }
 
 }

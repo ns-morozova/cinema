@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SeatPrice;
 use Illuminate\Http\Request;
 use App\Models\MovieSession;
 use Carbon\Carbon;
 use App\Models\CinemaHall;
 use App\Models\Ticket;
 use App\Models\Seat;
+use Vtiful\Kernel\Format;
 
 class ClientController extends Controller
 {
@@ -64,7 +66,50 @@ class ClientController extends Controller
 
     public function payment(Request $request)
     {
-       return view('client.payment');
+        try {
+            // Получаем ID билетов из сессии
+            $ticketIds = session('booked_ticket_ids', []);
+    
+            if (empty($ticketIds)) {
+                return redirect()->route('client.index')->with('error', 'Данные о бронировании не найдены.');
+            }
+            // Загружаем билеты с отношениями
+            $tickets = Ticket::with(['session.movie', 'session.cinemaHall'])
+                ->whereIn('id', $ticketIds)
+                ->get();
+    
+            if ($tickets->isEmpty()) {
+                return redirect()->route('client.index')->with('error', 'Билеты не найдены.');
+            }
+    
+            // Все билеты принадлежат одному сеансу, поэтому берем данные первого билета
+            $firstTicket = $tickets->first();
+            $session = $firstTicket->session;
+            $movie = $session->movie;
+            $hall = $session->cinemaHall;
+    
+            // Формируем данные для view
+            $data = [
+                'movie_title' => $movie->title,
+                'hall_name' => $hall->name,
+                'start_time' => $session->start_time,
+                'seats' => $tickets->map(function ($ticket) {
+                    return [
+                        'row' => $ticket->seat->row,
+                        'seat' => $ticket->seat->seat,
+                        'type' => $ticket->seat->type->value, // Тип места
+                        'price' => $ticket->seat->price?->price ?? 0, // Цена из таблицы seat_prices
+                    ];
+                }),
+                'total_cost' => $tickets->sum(function ($ticket) {
+                    return $ticket->seat->price?->price ?? 0; // Сумма цен билетов
+                }),
+            ];
+            
+            return view('client.payment', ['data' => $data]);
+        } catch (\Exception $e) {
+            return redirect()->route('client.index')->with('error', 'Произошла ошибка при загрузке данных о билетах.');
+        }
     }
 
     public function reserveTickets(Request $request)
@@ -77,36 +122,36 @@ class ClientController extends Controller
                 'seats' => 'required|array',
                 'seats.*' => 'exists:seats,id', // Проверяем, что все ID существуют в таблице seats
             ]);
-    
+
             $date = $validated['date'];
             $time = $validated['time'];
             $hallId = $validated['hall_id'];
             $selectedSeatIds = $validated['seats'];
-    
+
             // Формируем дату и время начала сеанса
             $start_time = Carbon::createFromFormat('Y-m-d H:i', "$date $time");
-    
+
             // Находим сеанс
             $session = MovieSession::where('hall_id', $hallId)
                 ->whereDate('start_time', $start_time)
                 ->first();
-    
+
             if (!$session) {
                 return response()->json(['success' => false, 'message' => 'Сеанс не найден.']);
             }
-    
+
             // Проверяем, что места свободны
             $existingTickets = Ticket::where('session_id', $session->id)
                 ->whereIn('seat_id', $selectedSeatIds) // Используем ID кресел
                 ->get()
                 ->keyBy('seat_id');
-    
+
             foreach ($selectedSeatIds as $seatId) {
                 if (isset($existingTickets[$seatId])) {
                     return response()->json(['success' => false, 'message' => 'Некоторые места уже заняты.']);
                 }
             }
-    
+
             // Создаем билеты
             $tickets = [];
             foreach ($selectedSeatIds as $seatId) {
@@ -115,16 +160,21 @@ class ClientController extends Controller
                     'session_id' => $session->id,
                     'seat_id' => $seatId,
                     'qr_code' => uniqid('ticket_', true), // Генерация уникального QR-кода
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
                 ];
             }
 
-        //     return response()->json([
-        //         'success' => true,
-        //         'data' => $tickets,
-        // ]);
-    
+
             Ticket::insert($tickets);
-    
+
+            // Получаем ID созданных билетов
+            $createdTickets = Ticket::where('session_id', $session->id)
+            ->whereIn('seat_id', $selectedSeatIds)->get();
+
+            // Сохраняем ID билетов в сессию
+            session(['booked_ticket_ids' => $createdTickets->pluck('id')]);
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);

@@ -16,4 +16,12 @@ class SeatPrice extends Model
     {
         return $this->belongsTo(CinemaHall::class, 'hall_id');
     }
+
+    // Связь с местами (обратная связь)
+    public function seats()
+    {
+        return $this->hasMany(Seat::class, 'type', 'seat_type')
+            ->where('hall_id', $this->hall_id);
+    }
+
 }

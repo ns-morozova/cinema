@@ -8,6 +8,7 @@ use App\Models\SeatPrice;
 use App\Models\Movie;
 use App\Models\MovieSession;
 use Carbon\Carbon;
+use App\Enums\SeatType;
 
 class AdminController extends Controller
 {
@@ -138,12 +139,12 @@ class AdminController extends Controller
 
         // Обновляем или создаем записи для цен
         SeatPrice::updateOrCreate(
-            ['hall_id' => $hallId, 'seat_type' => 'vip'],
+            ['hall_id' => $hallId, 'seat_type' => SeatType::VIP->value],
             ['price' => $validated['vip']]
         );
 
         SeatPrice::updateOrCreate(
-            ['hall_id' => $hallId, 'seat_type' => 'standart'],
+            ['hall_id' => $hallId, 'seat_type' => SeatType::STANDART->value],
             ['price' => $validated['standart']]
         );
 

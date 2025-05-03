@@ -9,7 +9,6 @@ class Ticket extends Model
 {
     use HasFactory;
 
-    //protected $fillable = ['session_id', 'seat_id', 'qr_code', 'status'];
     protected $fillable = ['session_id', 'seat_id', 'qr_code'];
 
     // Связь с сеансом
