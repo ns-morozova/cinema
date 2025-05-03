@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\MovieSession;
 use Carbon\Carbon;
 use App\Models\CinemaHall;
-use Illuminate\Support\Facades\Log;
+use App\Models\Ticket;
+use App\Models\Seat;
 
 class ClientController extends Controller
 {
@@ -22,32 +23,32 @@ class ClientController extends Controller
             $date = $request->input('date');
             $time = $request->input('time');
             $hallId = $request->input('hall_id');
-    
+
             // Проверяем обязательные параметры
             if (!$date || !$time || !$hallId) {
                 return redirect()->route('client.index')->with('error', 'Недостаточно данных для отображения зала.');
             }
-    
+
             // Находим зал по ID
             $hall = CinemaHall::findOrFail($hallId);
-    
+
             // Получаем все места в зале
             $seats = $hall->seats;
-    
+
             // Находим сеанс по дате, времени и залу
             $start_time = Carbon::createFromFormat('Y-m-d H:i', "$date $time");
             $session = MovieSession::where('hall_id', $hallId)
                 ->whereDate('start_time', $start_time)
                 ->first();
-    
+
             // Получаем билеты для этого сеанса
             $tickets = [];
             if ($session) {
                 $tickets = $session->tickets->mapWithKeys(function ($ticket) {
-                    return ["{$ticket->row}-{$ticket->seat}" => $ticket];
+                    return [$ticket->seat_id => $ticket];
                 });
             }
-    
+
             // Передаем данные в шаблон
             return view('client.hall', [
                 'date' => $date,
@@ -57,14 +58,77 @@ class ClientController extends Controller
                 'tickets' => $tickets,
             ]);
         } catch (\Exception $e) {
-            Log::error('Ошибка при загрузке зала:', ['hall_id' => $hallId, 'error' => $e->getMessage()]);
             return redirect()->route('client.index')->with('error', 'Произошла ошибка при загрузке зала.');
         }
     }
 
-    public function payment()
+    public function payment(Request $request)
     {
-        return view('client.payment');
+       return view('client.payment');
+    }
+
+    public function reserveTickets(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'date' => 'required|date',
+                'time' => 'required|string',
+                'hall_id' => 'required|exists:cinema_halls,id',
+                'seats' => 'required|array',
+                'seats.*' => 'exists:seats,id', // Проверяем, что все ID существуют в таблице seats
+            ]);
+    
+            $date = $validated['date'];
+            $time = $validated['time'];
+            $hallId = $validated['hall_id'];
+            $selectedSeatIds = $validated['seats'];
+    
+            // Формируем дату и время начала сеанса
+            $start_time = Carbon::createFromFormat('Y-m-d H:i', "$date $time");
+    
+            // Находим сеанс
+            $session = MovieSession::where('hall_id', $hallId)
+                ->whereDate('start_time', $start_time)
+                ->first();
+    
+            if (!$session) {
+                return response()->json(['success' => false, 'message' => 'Сеанс не найден.']);
+            }
+    
+            // Проверяем, что места свободны
+            $existingTickets = Ticket::where('session_id', $session->id)
+                ->whereIn('seat_id', $selectedSeatIds) // Используем ID кресел
+                ->get()
+                ->keyBy('seat_id');
+    
+            foreach ($selectedSeatIds as $seatId) {
+                if (isset($existingTickets[$seatId])) {
+                    return response()->json(['success' => false, 'message' => 'Некоторые места уже заняты.']);
+                }
+            }
+    
+            // Создаем билеты
+            $tickets = [];
+            foreach ($selectedSeatIds as $seatId) {
+                //$seat = Seat::findOrFail($seatId); // Находим место по ID
+                $tickets[] = [
+                    'session_id' => $session->id,
+                    'seat_id' => $seatId,
+                    'qr_code' => uniqid('ticket_', true), // Генерация уникального QR-кода
+                ];
+            }
+
+        //     return response()->json([
+        //         'success' => true,
+        //         'data' => $tickets,
+        // ]);
+    
+            Ticket::insert($tickets);
+    
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 
     public function ticket()
@@ -83,12 +147,12 @@ class ClientController extends Controller
 
             // Получаем все сеансы за указанную дату, только для залов с enabled = true
             $sessions = MovieSession::with(['movie', 'cinemaHall'])
-            ->whereBetween('start_time', [$startOfDay, $endOfDay])
-            ->whereHas('cinemaHall', function ($query) {
-            $query->where('enabled', true);
-            })
-            ->get()
-            ->groupBy('movie_id');            
+                ->whereBetween('start_time', [$startOfDay, $endOfDay])
+                ->whereHas('cinemaHall', function ($query) {
+                    $query->where('enabled', true);
+                })
+                ->get()
+                ->groupBy('movie_id');
 
             // Формируем массив данных для отображения
             $moviesData = [];
@@ -107,7 +171,7 @@ class ClientController extends Controller
                     $seances[$hallName][] = [
                         'time' => $startTime,
                         'hall_id' => $hallId, // Добавляем ID зала
-                    ];                    
+                    ];
                 }
 
                 $moviesData[] = [

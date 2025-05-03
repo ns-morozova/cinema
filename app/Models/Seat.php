@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\SeatType;
+use App\Models\Ticket;
 
 class Seat extends Model
 {
@@ -20,4 +21,11 @@ class Seat extends Model
     {
         return $this->belongsTo(CinemaHall::class, 'hall_id');
     }
+
+// Связь с билетом (обратная связь "один к одному")
+public function ticket()
+{
+    return $this->hasOne(Ticket::class, 'seat_id');
+}
+
 }

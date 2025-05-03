@@ -13,13 +13,10 @@ return new class extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('session_id')->constrained()->onDelete('cascade'); // Связь с сеансом
-            $table->integer('row')->unsigned(); // Номер ряда
-            $table->integer('seat')->unsigned(); // Номер места
-            $table->enum('type', ['vip', 'standart']); // Тип места
+            $table->foreignId('session_id')->constrained('movie_sessions')->onDelete('cascade'); // Связь с сеансом
+            $table->foreignId('seat_id')->constrained('seats')->onDelete('cascade')->unique(); // Добавляем уникальность
             $table->string('qr_code')->unique(); // Уникальный QR-код
-            $table->enum('status', ['booked', 'available'])->default('available'); // Статус бронирования
-            $table->timestamps();
+           $table->timestamps();
         });
     }
 

@@ -28,6 +28,7 @@ class CinemaHall extends Model
         return $this->hasMany(Seat::class, 'hall_id');
     }    
 
+
     public function store(Request $request)
     {
         $validated = $request->validate([
