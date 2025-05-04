@@ -40,10 +40,10 @@
                 <div class="col">
                     <p class="buying-scheme__legend-price"><span
                             class="buying-scheme__chair buying-scheme__chair_standart"></span> Свободно (<span
-                            class="buying-scheme__legend-value">250</span>руб)</p>
+                            class="buying-scheme__legend-value">{{$standart_price}}</span>руб)</p>
                     <p class="buying-scheme__legend-price"><span
                             class="buying-scheme__chair buying-scheme__chair_vip"></span> Свободно VIP (<span
-                            class="buying-scheme__legend-value">350</span>руб)</p>
+                            class="buying-scheme__legend-value">{{$vip_price}}</span>руб)</p>
                 </div>
                 <div class="col">
                     <p class="buying-scheme__legend-price"><span

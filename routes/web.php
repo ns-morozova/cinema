@@ -12,7 +12,7 @@ Route::controller(ClientController::class)->group(function () {
     Route::get('/', 'index')->name('client.index');
     Route::get('/hall', 'hall')->name('client.hall');
     Route::get('/payment', 'payment')->name('client.payment');
-    Route::get('/ticket', 'ticket')->name('client.ticket');
+    Route::post('/ticket', 'ticket')->name('client.ticket');
     Route::post('/reserve-tickets', 'reserveTickets')->name('client.reserveTickets');
 
     Route::post('client/sessions/by-date', 'getSessionsByDate')->name('client.sessions.byDate');

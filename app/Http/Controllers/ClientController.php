@@ -32,7 +32,13 @@ class ClientController extends Controller
             }
 
             // Находим зал по ID
-            $hall = CinemaHall::findOrFail($hallId);
+            //$hall = CinemaHall::findOrFail($hallId)->seatprices;
+            $hall = CinemaHall::with('seatPrices')->findOrFail($hallId);
+
+            // Извлекаем цены для vip и standart
+            $prices = $hall->seatPrices->pluck('price', 'seat_type');
+            $vipPrice = $prices['vip'] ?? 0; // Цена для VIP-мест
+            $standartPrice = $prices['standart'] ?? 0; // Цена для стандартных мест
 
             // Получаем все места в зале
             $seats = $hall->seats;
@@ -58,6 +64,8 @@ class ClientController extends Controller
                 'hall' => $hall,
                 'seats' => $seats,
                 'tickets' => $tickets,
+                'vip_price' => $vipPrice,
+                'standart_price' => $standartPrice,
             ]);
         } catch (\Exception $e) {
             return redirect()->route('client.index')->with('error', 'Произошла ошибка при загрузке зала.');
@@ -181,11 +189,14 @@ class ClientController extends Controller
         }
     }
 
-    public function ticket()
+    public function ticket(Request $request)
     {
-        return view('client.ticket');
-    }
+        // Получаем данные из POST-запроса
+        $data = json_decode($request->input('data'), true);
 
+        // Передаем данные в шаблон
+        return view('client.ticket', ['data' => $data]);
+    }
     // Получение данных о сеансах за выбранный день
     public function getSessionsByDate(Request $request)
     {

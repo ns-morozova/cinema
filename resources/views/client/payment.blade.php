@@ -21,11 +21,18 @@
             <p class="ticket__info">Стоимость: <span
                     class="ticket__details ticket__cost">{{ $data['total_cost'] }}</span> рублей</p>
 
-            <button class="acceptin-button" onclick="location.href='ticket.html'">Получить код бронирования</button>
+            <form id="ticket-form" action="{{ route('client.ticket') }}" method="POST" style="display: none;">
+                @csrf
+                <input type="hidden" name="data" value="{{ json_encode($data) }}">
+            </form>
+
+            <button class="acceptin-button" onclick="document.getElementById('ticket-form').submit();">
+                Получить код бронирования
+            </button>
 
             <p class="ticket__hint">
                 После оплаты билет будет доступен в этом окне, а также придёт вам на почту.
-                Покажите QR-код нашему контроллёру у входа в зал.
+                Покажите QR-код нашему контролёру у входа в зал.
             </p>
             <p class="ticket__hint">Приятного просмотра!</p>
         </div>
