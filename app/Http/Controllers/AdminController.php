@@ -195,43 +195,67 @@ class AdminController extends Controller
     public function storeSession(Request $request)
     {
         try {
+            // Валидация входных данных
             $validated = $request->validate([
                 'date' => 'required|string|max:10', // формат YYYY-MM-DD
                 'time' => 'required|string|max:5', // формат HH:MM
                 'movie_id' => 'required|integer|min:1',
                 'hall_id' => 'required|integer|min:1',
             ]);
-
-            // Собираем start_time из date и time
+    
+            // Формируем start_time из date и time
             $startTime = Carbon::createFromFormat('Y-m-d H:i', "{$validated['date']} {$validated['time']}");
-
-            // Проверка: есть ли уже сеанс в этом зале в это время
-            $exists = MovieSession::where('hall_id', $validated['hall_id'])
-                ->where('start_time', $startTime)
-                ->exists();
-
-            if ($exists) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'В выбранном зале на это время уже назначен сеанс.',
-                ], 422);
-            }
-
+    
             // Получаем продолжительность фильма
             $movie = Movie::findOrFail($validated['movie_id']);
             $duration = $movie->duration;
-
-            // Вычисляем end_time
+    
+            // Вычисляем end_time для нового сеанса
             $endTime = $startTime->copy()->addMinutes($duration);
-
-            // Создаём сеанс
+    
+            // Проверяем пересечение с предыдущим сеансом
+            $previousSession = MovieSession::where('hall_id', $validated['hall_id'])
+                ->whereDate('start_time', $startTime->toDateString())
+                ->where('start_time', '<', $startTime)
+                ->orderByDesc('start_time')
+                ->first();
+    
+            if ($previousSession) {
+                $previousEndTime = Carbon::parse($previousSession->end_time)->addMinutes(30);
+                if ($previousEndTime > $startTime) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Предыдущий сеанс заканчивается позже чем за 30 минут до начала нового.',
+                    ], 422);
+                }
+            }
+    
+            // Проверяем пересечение со следующим сеансом
+            $nextSession = MovieSession::where('hall_id', $validated['hall_id'])
+                ->whereDate('start_time', $startTime->toDateString())
+                ->where('start_time', '>', $startTime)
+                ->orderBy('start_time')
+                ->first();
+    
+            if ($nextSession) {
+                $nextStartTime = Carbon::parse($nextSession->start_time);
+                $newEndTimeWithBuffer = $endTime->copy()->addMinutes(30);
+                if ($newEndTimeWithBuffer > $nextStartTime) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Следующий сеанс начинается раньше чем через 30 минут после окончания нового.',
+                    ], 422);
+                }
+            }
+    
+            // Создаем новый сеанс
             MovieSession::create([
                 'movie_id' => $validated['movie_id'],
                 'hall_id' => $validated['hall_id'],
                 'start_time' => $startTime,
                 'end_time' => $endTime,
             ]);
-
+    
             return response()->json([
                 'success' => true,
                 'message' => 'Сеанс успешно создан.',

@@ -4,40 +4,50 @@
     </header>
     <div class="conf-step__wrapper">
         <p class="conf-step__paragraph">
-            <button class="conf-step__button conf-step__button-accent">Добавить фильм</button>
+            <button id="create-movie-btn" class="conf-step__button conf-step__button-accent">
+                Добавить фильм
+            </button>
         </p>
-
-        <div class="conf-step__movies">
+        <div class="conf-step__movies mt-10">
             @forelse($movies as $movie)
-                <div class="conf-step__movie">
+                <div class="conf-step__movie relative" style="background-color: {{ $movie->color }}">
                     <img class="conf-step__movie-poster" alt="poster"
                         src="{{ $movie->poster ? asset($movie->poster) : asset('images/admin/poster.png') }}">
                     <h3 class="conf-step__movie-title">{{ $movie->title }}</h3>
                     <p class="conf-step__movie-duration">{{ $movie->duration }} минут</p>
+                    <div class="absolute right-2 bottom-2">
+                        <button
+                            class="conf-step__button conf-step__button-trash delete-movie-btn"
+                             data-id="{{ $movie->id }}"
+                             data-title="{{ $movie->title }}">
+                        </button>
+                    </div>
                 </div>
             @empty
                 <p>Фильмы пока не добавлены.</p>
             @endforelse
         </div>
-
         <div class="mt-20">
             @php
                 use Carbon\Carbon;
-
-                $startDate = Carbon::create(2025, 4, 14);
+                $startDate = Carbon::today();
                 $dates = [];
                 for ($i = 0; $i < 14; $i++) {
                     $dates[] = $startDate->copy()->addDays($i);
                 }
-
                 $weekdays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             @endphp
-
             <ul class="conf-step__selectors-box selector-date" id="date-selector">
                 @foreach ($dates as $index => $date)
                     <li class="date-option {{ $index >= 7 ? 'hidden' : '' }}">
-                        <input type="radio" class="conf-step__radio radio-date" name="session-date"
-                            value="{{ $date->toDateString() }}" id="date-{{ $index }}" {{ $index === 0 ? 'checked' : '' }}>
+                        <input 
+                            type="radio"
+                            class="conf-step__radio radio-date"
+                            name="session-date"
+                            value="{{ $date->toDateString() }}"
+                            id="date-{{ $index }}"
+                            {{ $index === 0 ? 'checked' : '' }}
+                        >
                         <span class="conf-step__selector leading-7">
                             {{ $date->format('d.m') }}
                             <br>
@@ -53,157 +63,430 @@
             </ul>
         </div>
 
-        {{-- <div class="conf-step__seances">
-            <div class="conf-step__seances-hall">
-                <h3 class="conf-step__seances-title">Зал 1</h3>
-                <div class="conf-step__seances-timeline">
-                    <div class="conf-step__seances-movie"
-                        style="width: 60px; background-color: rgb(133, 255, 137); left: 0;">
-                        <p class="conf-step__seances-movie-title">Миссия выполнима</p>
-                        <p class="conf-step__seances-movie-start">10:00</p>
-                    </div>
-                    <div class="conf-step__seances-movie"
-                        style="width: 60px; background-color: rgb(133, 255, 137); left: 360px;">
-                        <p class="conf-step__seances-movie-title">Миссия выполнима</p>
-                        <p class="conf-step__seances-movie-start">12:00</p>
-                    </div>
-                    <div class="conf-step__seances-movie"
-                        style="width: 65px; background-color: rgb(202, 255, 133); left: 420px;">
-                        <p class="conf-step__seances-movie-title">Звёздные войны XXIII: Атака клонированных
-                            клонов</p>
-                        <p class="conf-step__seances-movie-start">14:00</p>
-                    </div>
-                </div>
-            </div>
-            <div class="conf-step__seances-hall">
-                <h3 class="conf-step__seances-title">Зал 2</h3>
-                <div class="conf-step__seances-timeline">
-                    <div class="conf-step__seances-movie"
-                        style="width: 65px; background-color: rgb(202, 255, 133); left: 595px;">
-                        <p class="conf-step__seances-movie-title">Звёздные войны XXIII: Атака клонированных
-                            клонов</p>
-                        <p class="conf-step__seances-movie-start">19:50</p>
-                    </div>
-                    <div class="conf-step__seances-movie"
-                        style="width: 60px; background-color: rgb(133, 255, 137); left: 660px;">
-                        <p class="conf-step__seances-movie-title">Миссия выполнима</p>
-                        <p class="conf-step__seances-movie-start">22:00</p>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
-        <div class="conf-step__seances">
-            @foreach ($halls as $hall)
-                    <div class="conf-step__seances-hall">
-                        <h3 class="conf-step__seances-title">{{ $hall['name'] }}</h3>
-                        {{-- <div class="conf-step__seances-timeline">
-                            <div class="conf-step__seances-movie"
-                                style="width: 60px; background-color: rgb(133, 255, 137); left: 0;">
-                                <p class="conf-step__seances-movie-title">Миссия выполнима</p>
-                                <p class="conf-step__seances-movie-start">00:00</p>
-                            </div>
-                            <div class="conf-step__seances-movie"
-                                style="width: 60px; background-color: rgb(133, 255, 137); left: 360px;">
-                                <p class="conf-step__seances-movie-title">Миссия выполнима</p>
-                                <p class="conf-step__seances-movie-start">12:00</p>
-                            </div>
-                            <div class="conf-step__seances-movie"
-                                style="width: 65px; background-color: rgb(202, 255, 133); left: 420px;">
-                                <p class="conf-step__seances-movie-title">Звёздные войны XXIII: Атака клонированных
-                                    клонов</p>
-                                <p class="conf-step__seances-movie-start">14:00</p>
-                            </div>
-                        </div> --}}
-
-                        <div class="conf-step__seances-timeline">
-                            @foreach ($movieSessions->where('hall_id', $hall['id']) as $session)
-                                            @php
-                                                $start = \Carbon\Carbon::parse($session->start_time);
-                                                $date = $start->toDateString();
-                                                $duration = $session->movie->duration ?? 0;
-                                                $width = $duration; // 1 мин = 1px
-                                                $left = $start->hour * 60 + $start->minute;
-                                            @endphp
-                                            <div class="conf-step__seances-movie" data-date="{{ $date }}"
-                                                style="width: {{ $width }}px; background-color: rgb(133, 255, 137); left: {{ $left }}px;">
-                                                <p class="conf-step__seances-movie-title">{{ $session->movie->title }}</p>
-                                                <p class="conf-step__seances-movie-start">{{ $start->format('H:i') }}</p>
-                                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-            @endforeach
+        <div>
+            <p class="conf-step__paragraph">
+                <button id="create-session-btn" class="conf-step__button conf-step__button-accent">
+                    Добавить сеанс
+                </button>
+            </p>
         </div>
 
-        <fieldset class="conf-step__buttons text-center">
+        <div class="conf-step__seances" id="seances-container">
+            @foreach ($halls as $hall)
+                <div class="conf-step__seances-hall" data-hall-id="{{ $hall['id'] }}">
+                    <h3 class="conf-step__seances-title">{{ $hall['name'] }}</h3>
+                    <div class="conf-step__seances-timeline"></div>
+                </div>
+            @endforeach
+        </div>
+        {{-- <fieldset class="conf-step__buttons text-center">
             <button class="conf-step__button conf-step__button-regular">Отмена</button>
             <input type="submit" value="Сохранить" class="conf-step__button conf-step__button-accent">
-        </fieldset>
+        </fieldset> --}}
     </div>
 </section>
 
+<div id="create-movie-modal" class="modal" style="display:none;">
+    <div class="modal__overlay"></div>
+    <div class="modal__window">
+        <h3 class="modal__title">Добавить новый фильм</h3>
+        <form id="create-movie-form" action="{{ route('admin.movies.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <label class="modal__label">Название фильма:
+                <input type="text" name="title" class="modal__input" required>
+            </label>
+            <label class="modal__label">Описание:
+                <input type="text" name="description" class="modal__input" required>
+            </label>
+            <label class="modal__label">Продолжительность, минут:
+                <input type="number" name="duration" class="modal__input" min="1" required>
+            </label>
+            <label class="modal__label">Страна:
+                <input type="text" name="country" class="modal__input" required>
+            </label>
+            <label class="modal__label modal__label_color">Цвет в таблице сеансов:
+                <input type="color" name="color" class="modal__input" id="movie-color" value="#B78EAA" required>
+            </label>
+            <label class="modal__label">Постер:
+                <input type="file" name="poster" class="modal__input" accept="image/*" required>
+            </label>
+
+            <div class="modal__actions">
+                <button type="button" id="cancel-create-movie"
+                    class="conf-step__button conf-step__button-regular">Отмена</button>
+                <button type="submit" id="save-create-movie"
+                    class="conf-step__button conf-step__button-accent">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="delete-movie-modal" class="modal" style="display: none;">
+    <div class="modal__overlay"></div>
+    <div class="modal__window">
+        <h3 class="modal__title">Удалить фильм</h3>
+        <p id="delete-movie-text" class="modal__label">Вы уверены, что хотите удалить фильм?</p>
+        <form id="delete-movie-form" method="POST">
+            @csrf
+            @method('DELETE')
+            <div class="modal__actions">
+                <button type="button" id="cancel-delete-movie" class="conf-step__button conf-step__button-regular">Отмена</button>
+                <button type="submit" class="conf-step__button conf-step__button-accent">Удалить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="create-session-modal" class="modal" style="display:none;">
+    <div class="modal__overlay"></div>
+    <div class="modal__window">
+        <h3 class="modal__title">Добавить сеанс</h3>
+        <form id="create-session-form" action="{{ route('admin.sessions.store') }}" method="POST">
+            @csrf
+            <label class="modal__label">Дата:
+                <input type="hidden" name="date" id="hidden-date">
+                <p id="checked-date" class="text-gray-500 text-md mt-2"></p>
+            </label>
+            <label class="modal__label">Фильм:
+                <select name="movie_id" class="modal__input" required>
+                    <option value="" disabled selected>Выберите фильм</option>
+                    @foreach ($movies as $movie)
+                        <option value="{{ $movie->id }}">{{ $movie->title }}</option>
+                    @endforeach
+                </select>
+            </label>
+            <label class="modal__label">Зал:
+                <select name="hall_id" class="modal__input" required>
+                    <option value="" disabled selected>Выберите зал</option>
+                    @foreach ($halls as $hall)
+                        <option value="{{ $hall['id'] }}">{{ $hall['name'] }}</option>
+                    @endforeach
+                </select>
+            </label>
+            <label class="modal__label">Время сеанса:
+                <select name="time" class="modal__input" required>
+                    <option value="" disabled selected>Выберите время</option>
+                    <option value="09:00">09:00</option>
+                    <option value="12:00">12:00</option>
+                    <option value="15:00">15:00</option>
+                    <option value="18:00">18:00</option>
+                    <option value="21:00">21:00</option>
+                </select>
+            </label>
+            <div id="session-error" class="text-red-500 text-xl mt-1"></div>
+            <div class="modal__actions">
+                <button type="button" id="cancel-create-session"
+                    class="conf-step__button conf-step__button-regular">Отмена</button>
+                <button type="submit" id="save-create-session"
+                    class="conf-step__button conf-step__button-accent">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="delete-session-modal" class="modal" style="display: none;">
+    <div class="modal__overlay"></div>
+    <div class="modal__window">
+        <h3 class="modal__title">Удалить сеанс</h3>
+        <p id="delete-session-text" class="modal__label">Вы уверены, что хотите удалить сеанс?</p>
+        <form id="delete-session-form" method="POST">
+            @csrf
+            @method('DELETE')
+            <div class="modal__actions">
+                <button type="button" id="cancel-delete-session" class="conf-step__button conf-step__button-regular">Отмена</button>
+                <button type="submit" class="conf-step__button conf-step__button-accent">Удалить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     const toggleBtn = document.getElementById('toggle-dates');
-    //     const dateOptions = document.querySelectorAll('#date-selector .date-option input');
-    //     let showingFirstGroup = true;
-
-    //     toggleBtn.addEventListener('click', function () {
-    //         dateOptions.forEach((input, idx) => {
-    //             const parent = input.closest('.date-option');
-    //             if (showingFirstGroup) {
-    //                 parent.classList.toggle('hidden', idx < 7);
-    //             } else {
-    //                 parent.classList.toggle('hidden', idx >= 7);
-    //             }
-    //         });
-
-    //         // Сброс выбранного — и установка нужного по умолчанию
-    //         dateOptions.forEach(input => input.checked = false);
-    //         if (showingFirstGroup) {
-    //             dateOptions[7].checked = true; // 21 апреля
-    //             toggleBtn.textContent = '←';
-    //         } else {
-    //             dateOptions[0].checked = true; // 14 апреля
-    //             toggleBtn.textContent = '→';
-    //         }
-
-    //         showingFirstGroup = !showingFirstGroup;
-    //     });
-    // });
-
     document.addEventListener('DOMContentLoaded', function () {
-        const toggleBtn = document.getElementById('toggle-dates');
-        const dateOptions = document.querySelectorAll('#date-selector .date-option input');
-        let showingFirstGroup = true;
+        let selectedDate = undefined;
 
-        function filterSessionsByDate(date) {
-            document.querySelectorAll('.conf-step__seances-movie').forEach(el => {
-                if (el.dataset.date === date) {
-                    el.style.display = '';
-                } else {
-                    el.style.display = 'none';
-                }
-            });
-        }
+        const createModalMovie = document.getElementById('create-movie-modal');
+        const createBtnMovie = document.getElementById('create-movie-btn');
+        const cancelBtnMovie = document.getElementById('cancel-create-movie');
 
-        // Фильтрация при выборе даты
-        dateOptions.forEach(input => {
-            input.addEventListener('change', function () {
-                if (this.checked) {
-                    filterSessionsByDate(this.value);
-                }
+        const dltModalMovie = document.getElementById('delete-movie-modal');
+        const dltFormMovie = document.getElementById('delete-movie-form');
+        const dltTextMovie = document.getElementById('delete-movie-text');
+        const cancelDltBtnMovie = document.getElementById('cancel-delete-movie');
+
+        const createModalSession = document.getElementById('create-session-modal');
+        const createBtnSession = document.getElementById('create-session-btn');
+        const cancelBtnSession = document.getElementById('cancel-create-session');
+
+        const dltModalSession = document.getElementById('delete-session-modal');
+        const dltFormSession = document.getElementById('delete-session-form');
+        const dltTextSession = document.getElementById('delete-session-text');
+        const cancelDltBtnSession = document.getElementById('cancel-delete-session');
+
+        const closeModalMovie = () => createModalMovie.style.display = 'none';
+        const openModalMovie = () => createModalMovie.style.display = 'block';
+
+        const closeModalSession = () => createModalSession.style.display = 'none';
+        const openModalSession = () => { 
+            createModalSession.style.display = 'block';
+            const dateParagraph = document.getElementById('checked-date');
+            if (dateParagraph) {
+                dateParagraph.textContent = selectedDate;
+                document.getElementById('hidden-date').value = selectedDate;
+            }
+        };
+
+        const colorInput = document.getElementById('movie-color');
+
+        colorInput.addEventListener('input', function () {
+            this.style.backgroundColor = this.value;
+        });
+
+        createBtnMovie.addEventListener('click', openModalMovie);
+        cancelBtnMovie.addEventListener('click', closeModalMovie);
+
+        createBtnSession.addEventListener('click', openModalSession);
+        cancelBtnSession.addEventListener('click', closeModalSession);
+
+        // Открытие модального окна при клике на кнопку удаления фильма
+        document.querySelectorAll('.delete-movie-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const movieId = button.getAttribute('data-id');
+                const movieTitle = button.getAttribute('data-title');
+
+                dltTextMovie.textContent = `Вы уверены, что хотите удалить фильм «${movieTitle}» из базы?`;
+                dltFormMovie.action = `/admin/movies/${movieId}`;
+
+                dltModalMovie.style.display = 'block';
             });
         });
 
-        // Инициализация фильтра при загрузке
-        const checkedDate = document.querySelector('.radio-date:checked')?.value;
-        if (checkedDate) {
-            filterSessionsByDate(checkedDate);
+        // Отмена удаления фильма
+        cancelDltBtnMovie.addEventListener('click', () => {
+            dltModalMovie.style.display = 'none';
+        });
+
+        const dateSelector = document.getElementById('date-selector');
+        const toggleBtn = document.getElementById('toggle-dates');
+        const seancesContainer = document.getElementById('seances-container');
+        let showingFirstGroup = true;
+
+        const timelineStart = 9 * 60;   // 9:00 в минутах
+        const timelineEnd = 23 * 60;    // 23:00 в минутах
+        const timelineDuration = timelineEnd - timelineStart; // всего 840 минут
+
+        // Функция для загрузки сеансов через AJAX
+        async function loadSessions(date) {
+            try {
+                const formattedDate = new Date(date).toISOString().split('T')[0]; // Форматируем дату
+
+                const response = await fetch('/admin/sessions/by-date', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // CSRF-токен для Laravel
+                    },
+                    body: JSON.stringify({ date: formattedDate }), // Передаем дату в теле запроса
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Ошибка HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                renderSessions(data.sessions);
+
+            } catch (error) {
+                console.error('Ошибка при загрузке сеансов:', error);
+            }
         }
 
+        // Функция для отображения сеансов
+        function renderSessions(sessions) {
+            // Очищаем контейнер сеансов
+            seancesContainer.innerHTML = '';
+            let hallId = 0;
+            let hallSessions = [];
+            let hallDiv = undefined;
+            let hallTitle = undefined;
+            let timelineDiv = undefined;
+            let sessionDiv = undefined;
+            let movieTitle = undefined;
+            let startTime = undefined;
+
+            // Отображаем сеансы для каждого зала
+            @foreach ($halls as $hall)
+                hallId = {{ $hall['id'] }};
+                hallSessions = sessions[hallId] || [];
+
+                hallDiv = document.createElement('div');
+                hallDiv.classList.add('conf-step__seances-hall');
+                hallDiv.setAttribute('data-hall-id', hallId);
+
+                hallTitle = document.createElement('h3');
+                hallTitle.classList.add('conf-step__seances-title');
+                hallTitle.textContent = '{{ $hall['name'] }}';
+
+                timelineDiv = document.createElement('div');
+                timelineDiv.classList.add('conf-step__seances-timeline');
+
+                hallSessions.forEach(session => {
+                    const start = new Date(session.start_time);
+                    const end = new Date(session.end_time);
+
+                    const startMinutes = start.getHours() * 60 + start.getMinutes();
+                    const endMinutes = end.getHours() * 60 + end.getMinutes();
+                    const sessionDuration = endMinutes - startMinutes;
+
+                    const leftPercent = ((startMinutes - timelineStart) / timelineDuration) * 100;
+                    const widthPercent = (sessionDuration / timelineDuration) * 100;
+
+                    sessionDiv = document.createElement('div');
+                    sessionDiv.classList.add('conf-step__seances-movie');
+                    sessionDiv.style.backgroundColor = session.movie.color || '#ccc';
+
+                    sessionDiv.style.left = `${leftPercent}%`;
+                    sessionDiv.style.width = `${widthPercent}%`;
+                    sessionDiv.setAttribute('data-session-id', session.id);
+
+                    movieTitle = document.createElement('p');
+                    movieTitle.classList.add('conf-step__seances-movie-title');
+                    movieTitle.textContent = session.movie.title;
+
+                    startTime = document.createElement('p');
+                    startTime.classList.add('conf-step__seances-movie-start');
+                    startTime.textContent = new Date(session.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    const deleteButtonDiv = document.createElement('div');
+                    deleteButtonDiv.classList.add('absolute', 'right-1', 'bottom-1');
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.classList.add('conf-step__button', 'conf-step__button-trash-session', 'delete-session-btn');
+                    deleteButton.setAttribute('data-id', session.id);
+                    deleteButton.setAttribute('data-title', session.movie.title);
+
+                    deleteButtonDiv.appendChild(deleteButton);
+                    sessionDiv.appendChild(movieTitle);
+                    sessionDiv.appendChild(startTime);
+                    sessionDiv.appendChild(deleteButtonDiv);
+                    timelineDiv.appendChild(sessionDiv);
+                });
+
+                hallDiv.appendChild(hallTitle);
+                hallDiv.appendChild(timelineDiv);
+                seancesContainer.appendChild(hallDiv);
+            @endforeach
+        }
+
+        // Обработчик записи нового сеанса в БД
+        document.getElementById('create-session-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const form = this;
+            const formData = new FormData(form);
+            const url = form.getAttribute('action');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Успешно добавлено, обновляем сетку сеансов
+                    loadSessions(document.querySelector('.radio-date:checked').value);
+                    form.reset();
+                    closeModalSession();
+                    alert('Сеанс успешно создан.');
+                } else {
+                    // Обработка ошибок
+                    const errorDiv = document.getElementById('session-error');
+                    errorDiv.textContent = result.message || 'Произошла ошибка при создании сеанса.';
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке данных:', error);
+                const errorDiv = document.getElementById('session-error');
+                errorDiv.textContent = 'В это время уже добавлен сеанс.';
+            }
+        });
+
+        // Открытие модального окна при клике на кнопку удаления сеанса
+        seancesContainer.addEventListener('click', function (event) {
+            const button = event.target.closest('.delete-session-btn');
+            if (button) {
+                const sessionId = button.getAttribute('data-id');
+                const sessionTitle = button.getAttribute('data-title');
+                dltTextSession.textContent = `Вы уверены, что хотите удалить сеанс «${sessionTitle}» из базы?`;
+                dltFormSession.action = `/admin/sessions/${sessionId}`;
+                dltModalSession.style.display = 'block';
+            }
+        });
+
+        // Обработка удаления сеанса через AJAX
+        document.getElementById('delete-session-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const form = this;
+            const url = form.getAttribute('action');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Успешно удалено, обновляем сетку сеансов
+                    loadSessions(document.querySelector('.radio-date:checked').value);
+                    dltModalSession.style.display = 'none';
+                    alert('Сеанс успешно удален.');
+                } else {
+                    alert(result.message || 'Произошла ошибка при удалении сеанса.');
+                }
+            } catch (error) {
+                console.error('Ошибка при удалении сеанса:', error);
+                alert('Возникла ошибка. Попробуйте снова.');
+            }
+        });
+
+        // Отмена удаления сеанса
+        cancelDltBtnSession.addEventListener('click', () => {
+            dltModalSession.style.display = 'none';
+        });
+
+        // Обработчик выбора даты
+        dateSelector.addEventListener('change', function (event) {
+            selectedDate = event.target.value;
+            if (selectedDate) {
+                loadSessions(selectedDate);
+            }
+        });
+
+        // Инициализация фильтра при загрузке
+        selectedDate = document.querySelector('.radio-date:checked')?.value;
+        if (selectedDate) {
+            loadSessions(selectedDate);
+        }
+
+        // Переключение между группами дат
         toggleBtn.addEventListener('click', function () {
+            const dateOptions = document.querySelectorAll('#date-selector .date-option input');
             dateOptions.forEach((input, idx) => {
                 const parent = input.closest('.date-option');
                 if (showingFirstGroup) {
@@ -212,19 +495,18 @@
                     parent.classList.toggle('hidden', idx >= 7);
                 }
             });
-
             dateOptions.forEach(input => input.checked = false);
             if (showingFirstGroup) {
                 dateOptions[7].checked = true;
                 toggleBtn.textContent = '←';
-                filterSessionsByDate(dateOptions[7].value);
+                loadSessions(dateOptions[7].value);
             } else {
                 dateOptions[0].checked = true;
                 toggleBtn.textContent = '→';
-                filterSessionsByDate(dateOptions[0].value);
+                loadSessions(dateOptions[0].value);
             }
-
             showingFirstGroup = !showingFirstGroup;
         });
+
     });
 </script>

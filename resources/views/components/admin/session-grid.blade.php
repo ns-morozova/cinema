@@ -16,10 +16,8 @@
                     <h3 class="conf-step__movie-title">{{ $movie->title }}</h3>
                     <p class="conf-step__movie-duration">{{ $movie->duration }} минут</p>
                     <div class="absolute right-2 bottom-2">
-                        <button
-                            class="conf-step__button conf-step__button-trash delete-movie-btn"
-                             data-id="{{ $movie->id }}"
-                             data-title="{{ $movie->title }}">
+                        <button class="conf-step__button conf-step__button-trash delete-movie-btn"
+                            data-id="{{ $movie->id }}" data-title="{{ $movie->title }}">
                         </button>
                     </div>
                 </div>
@@ -40,14 +38,8 @@
             <ul class="conf-step__selectors-box selector-date" id="date-selector">
                 @foreach ($dates as $index => $date)
                     <li class="date-option {{ $index >= 7 ? 'hidden' : '' }}">
-                        <input 
-                            type="radio"
-                            class="conf-step__radio radio-date"
-                            name="session-date"
-                            value="{{ $date->toDateString() }}"
-                            id="date-{{ $index }}"
-                            {{ $index === 0 ? 'checked' : '' }}
-                        >
+                        <input type="radio" class="conf-step__radio radio-date" name="session-date"
+                            value="{{ $date->toDateString() }}" id="date-{{ $index }}" {{ $index === 0 ? 'checked' : '' }}>
                         <span class="conf-step__selector leading-7">
                             {{ $date->format('d.m') }}
                             <br>
@@ -90,7 +82,8 @@
     <div class="modal__overlay"></div>
     <div class="modal__window">
         <h3 class="modal__title">Добавить новый фильм</h3>
-        <form id="create-movie-form" action="{{ route('admin.movies.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="create-movie-form" action="{{ route('admin.movies.store') }}" method="POST"
+            enctype="multipart/form-data">
             @csrf
             <label class="modal__label">Название фильма:
                 <input type="text" name="title" class="modal__input" required>
@@ -130,7 +123,8 @@
             @csrf
             @method('DELETE')
             <div class="modal__actions">
-                <button type="button" id="cancel-delete-movie" class="conf-step__button conf-step__button-regular">Отмена</button>
+                <button type="button" id="cancel-delete-movie"
+                    class="conf-step__button conf-step__button-regular">Отмена</button>
                 <button type="submit" class="conf-step__button conf-step__button-accent">Удалить</button>
             </div>
         </form>
@@ -163,14 +157,10 @@
                     @endforeach
                 </select>
             </label>
-            <label class="modal__label">Время сеанса:
-                <select name="time" class="modal__input" required>
+            <label class="modal__label">
+                Время сеанса:
+                <select name="time" class="modal__input" id="session-time" required>
                     <option value="" disabled selected>Выберите время</option>
-                    <option value="09:00">09:00</option>
-                    <option value="12:00">12:00</option>
-                    <option value="15:00">15:00</option>
-                    <option value="18:00">18:00</option>
-                    <option value="21:00">21:00</option>
                 </select>
             </label>
             <div id="session-error" class="text-red-500 text-xl mt-1"></div>
@@ -193,7 +183,8 @@
             @csrf
             @method('DELETE')
             <div class="modal__actions">
-                <button type="button" id="cancel-delete-session" class="conf-step__button conf-step__button-regular">Отмена</button>
+                <button type="button" id="cancel-delete-session"
+                    class="conf-step__button conf-step__button-regular">Отмена</button>
                 <button type="submit" class="conf-step__button conf-step__button-accent">Удалить</button>
             </div>
         </form>
@@ -225,15 +216,66 @@
         const closeModalMovie = () => createModalMovie.style.display = 'none';
         const openModalMovie = () => createModalMovie.style.display = 'block';
 
-        const closeModalSession = () => createModalSession.style.display = 'none';
-        const openModalSession = () => { 
+        const closeModalSession = () => {
+            createModalSession.style.display = 'none';
+            const form = document.getElementById('create-session-form');
+            form.reset();
+            const errorDiv = document.getElementById('session-error');
+            errorDiv.textContent = '';
+        }
+
+        const openModalSession = () => {
             createModalSession.style.display = 'block';
-            const dateParagraph = document.getElementById('checked-date');
-            if (dateParagraph) {
-                dateParagraph.textContent = selectedDate;
-                document.getElementById('hidden-date').value = selectedDate;
+            const checkedDateText = document.getElementById('checked-date');
+            const sessionTimeSelect = document.getElementById('session-time');
+            if (!checkedDateText) {
+                sessionTimeSelect.innerHTML = '<option value="" disabled selected>Дата не выбрана</option>';
+                return;
+            };
+            checkedDateText.textContent = selectedDate;
+            document.getElementById('hidden-date').value = selectedDate;
+
+            // Преобразуем выбранную дату в объект Date
+            const selectedDateTime = new Date(selectedDate);
+            const now = new Date();
+
+            // Определяем начальное время
+            let startHour = 9; // Начинаем с 09:00
+            let startMinute = 0;
+
+            if (
+                selectedDateTime.toDateString() === now.toDateString() && // Если выбранная дата совпадает с текущей
+                now.getHours() * 60 + now.getMinutes() > 9 * 60 // И текущее время больше 09:00
+            ) {
+                // Округляем текущее время до ближайших 15 минут вверх
+                startHour = now.getHours();
+                startMinute = Math.ceil(now.getMinutes() / 15) * 15;
+                if (startMinute >= 60) {
+                    startHour += 1;
+                    startMinute = 0;
+                }
             }
-        };
+
+            sessionTimeSelect.innerHTML = '<option value="" disabled selected>Выберите время</option>';
+            // Проверяем, что начальное время не выходит за 21:00
+            if (startHour >= 21 && startMinute > 0) {
+                sessionTimeSelect.innerHTML = '<option value="" disabled selected>Нет доступного времени</option>';
+                return;
+            }
+
+            // Генерируем временные слоты с интервалом в 15 минут
+            for (let hour = startHour; hour < 21; hour++) {
+                for (let minute = (hour === startHour ? startMinute : 0); minute < 60; minute += 15) {
+                    // Форматируем время в формат HH:MM
+                    const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+                    sessionTimeSelect.appendChild(option);
+                }
+            }
+
+        }; //openModalSession
 
         const colorInput = document.getElementById('movie-color');
 
@@ -394,9 +436,9 @@
                     body: formData,
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                // if (!response.ok) {
+                //     throw new Error(`HTTP error! status: ${response.status}`);
+                // }
 
                 const result = await response.json();
 
@@ -412,7 +454,7 @@
                     errorDiv.textContent = result.message || 'Произошла ошибка при создании сеанса.';
                 }
             } catch (error) {
-                console.error('Ошибка при отправке данных:', error);
+                console.error('Ошибка при отправке данных: ', error);
                 const errorDiv = document.getElementById('session-error');
                 errorDiv.textContent = 'В это время уже добавлен сеанс.';
             }

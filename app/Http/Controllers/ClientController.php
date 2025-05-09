@@ -77,7 +77,7 @@ class ClientController extends Controller
         try {
             // Получаем ID билетов из сессии
             $ticketIds = session('booked_ticket_ids', []);
-    
+
             if (empty($ticketIds)) {
                 return redirect()->route('client.index')->with('error', 'Данные о бронировании не найдены.');
             }
@@ -85,17 +85,17 @@ class ClientController extends Controller
             $tickets = Ticket::with(['session.movie', 'session.cinemaHall'])
                 ->whereIn('id', $ticketIds)
                 ->get();
-    
+
             if ($tickets->isEmpty()) {
                 return redirect()->route('client.index')->with('error', 'Билеты не найдены.');
             }
-    
+
             // Все билеты принадлежат одному сеансу, поэтому берем данные первого билета
             $firstTicket = $tickets->first();
             $session = $firstTicket->session;
             $movie = $session->movie;
             $hall = $session->cinemaHall;
-    
+
             // Формируем данные для view
             $data = [
                 'movie_title' => $movie->title,
@@ -113,7 +113,7 @@ class ClientController extends Controller
                     return $ticket->seat->price?->price ?? 0; // Сумма цен билетов
                 }),
             ];
-            
+
             return view('client.payment', ['data' => $data]);
         } catch (\Exception $e) {
             return redirect()->route('client.index')->with('error', 'Произошла ошибка при загрузке данных о билетах.');
@@ -178,7 +178,7 @@ class ClientController extends Controller
 
             // Получаем ID созданных билетов
             $createdTickets = Ticket::where('session_id', $session->id)
-            ->whereIn('seat_id', $selectedSeatIds)->get();
+                ->whereIn('seat_id', $selectedSeatIds)->get();
 
             // Сохраняем ID билетов в сессию
             session(['booked_ticket_ids' => $createdTickets->pluck('id')]);
@@ -205,13 +205,17 @@ class ClientController extends Controller
             $startOfDay = Carbon::parse($date)->startOfDay();
             $endOfDay = Carbon::parse($date)->endOfDay();
 
+            // Текущее время
+            $currentTime = Carbon::now();
 
             // Получаем все сеансы за указанную дату, только для залов с enabled = true
+            // Добавляем условие: время начала сеанса должно быть больше текущего времени
             $sessions = MovieSession::with(['movie', 'cinemaHall'])
                 ->whereBetween('start_time', [$startOfDay, $endOfDay])
                 ->whereHas('cinemaHall', function ($query) {
                     $query->where('enabled', true);
                 })
+                ->where('start_time', '>', $currentTime) // Добавляем условие
                 ->get()
                 ->groupBy('movie_id');
 
@@ -228,7 +232,6 @@ class ClientController extends Controller
                     if (!isset($seances[$hallName])) {
                         $seances[$hallName] = [];
                     }
-                    //$seances[$hallName][] = $startTime;
                     $seances[$hallName][] = [
                         'time' => $startTime,
                         'hall_id' => $hallId, // Добавляем ID зала
@@ -252,4 +255,5 @@ class ClientController extends Controller
             return response()->json([], 500);
         }
     }
+
 }
