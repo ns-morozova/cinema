@@ -748,7 +748,8 @@ textarea.conf-step__input {
     position: relative;
     background: #fff;
     padding: 30px 25px;
-    margin: 25% auto;
+    /* margin: 5% auto; */
+    margin: 0;
     border-radius: 8px;
     max-width: 400px;
     width: 90%;
