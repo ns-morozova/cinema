@@ -19,17 +19,16 @@
                             @endphp
 
                             <span class="buying-scheme__chair
-                                                                @if ($type === 'standart')
+                                                                @if ($isBooked)
+                                                                    buying-scheme__chair_taken
+                                                                @elseif ($type === 'standart')
                                                                     buying-scheme__chair_standart
                                                                 @elseif ($type === 'vip')
                                                                     buying-scheme__chair_vip
                                                                 @else
                                                                     buying-scheme__chair_disabled
                                                                 @endif
-                                                                @if ($isBooked)
-                                                                    buying-scheme__chair_taken
-                                                                @endif"
-                                                                data-seat-id="{{ $seat->id }}"
+                                                                "data-seat-id="{{ $seat->id }}"
                                 data-row="{{ $seat->row }}" data-seat="{{ $seat->seat }}"></span>
 
                         @endforeach

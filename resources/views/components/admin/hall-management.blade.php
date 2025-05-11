@@ -73,7 +73,7 @@
         const cancelDltBtn = document.getElementById('cancel-delete-hall');
 
         const closeModalHall = () => createModalHall.style.display = 'none';
-        const openModalHall = () => createModalHall.style.display = 'flex';
+        const openModalHall = () => createModalHall.style.display = 'block';
 
         createBtnHall.addEventListener('click', openModalHall);
         cancelBtnHall.addEventListener('click', closeModalHall);
@@ -87,7 +87,7 @@
                 dltTextHall.textContent = `Вы уверены, что хотите удалить зал «${hallName}»?`;
                 dltFormHall.action = `/admin/cinema-halls/${hallId}`;
 
-                dltModalHall.style.display = 'flex';
+                dltModalHall.style.display = 'block';
             });
         });
 
