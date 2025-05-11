@@ -83,21 +83,21 @@
                 movieDiv.classList.add('movie');
 
                 movieDiv.innerHTML = `
-            <div class="movie__info">
-                <div class="movie__poster">
-                    <img class="movie__poster-image" alt="${movie.title} постер" src="${movie.poster}">
+                <div class="movie__info">
+                    <div class="movie__poster">
+                        <img class="movie__poster-image" alt="${movie.title} постер" src="${movie.poster}">
+                    </div>
+                    <div class="movie__description">
+                        <h2 class="movie__title">${movie.title}</h2>
+                        <p class="movie__synopsis">${movie.description}</p>
+                        <p class="movie__data">
+                            <span class="movie__data-duration">${movie.duration}</span>
+                            <span class="movie__data-origin">${movie.country}</span>
+                        </p>
+                    </div>
                 </div>
-                <div class="movie__description">
-                    <h2 class="movie__title">${movie.title}</h2>
-                    <p class="movie__synopsis">${movie.description}</p>
-                    <p class="movie__data">
-                        <span class="movie__data-duration">${movie.duration}</span>
-                        <span class="movie__data-origin">${movie.country}</span>
-                    </p>
-                </div>
-            </div>
             ${Object.entries(movie.seances)
-                        .map(([hallName, times]) => `
+                .map(([hallName, times]) => `
                     <div class="movie-seances__hall">
                         <h3 class="movie-seances__hall-title">${hallName}</h3>
                         <ul class="movie-seances__list">
@@ -112,8 +112,8 @@
                             ).join('')}                            
                         </ul>
                     </div>
-                `)
-                        .join('')}
+            `)
+            .join('')}
         `;
 
                 moviesContainer.appendChild(movieDiv);

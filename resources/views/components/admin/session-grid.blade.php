@@ -159,7 +159,7 @@
             </label>
             <label class="modal__label">
                 Время сеанса:
-                <select name="time" class="modal__input" id="session-time" required>
+                <select name="time" class="modal__input" id="session-time" required >
                     <option value="" disabled selected>Выберите время</option>
                 </select>
             </label>
@@ -214,7 +214,7 @@
         const cancelDltBtnSession = document.getElementById('cancel-delete-session');
 
         const closeModalMovie = () => createModalMovie.style.display = 'none';
-        const openModalMovie = () => createModalMovie.style.display = 'block';
+        const openModalMovie = () => createModalMovie.style.display = 'flex';
 
         const closeModalSession = () => {
             createModalSession.style.display = 'none';
@@ -225,7 +225,7 @@
         }
 
         const openModalSession = () => {
-            createModalSession.style.display = 'block';
+            createModalSession.style.display = 'flex';
             const checkedDateText = document.getElementById('checked-date');
             const sessionTimeSelect = document.getElementById('session-time');
             if (!checkedDateText) {
@@ -298,7 +298,7 @@
                 dltTextMovie.textContent = `Вы уверены, что хотите удалить фильм «${movieTitle}» из базы?`;
                 dltFormMovie.action = `/admin/movies/${movieId}`;
 
-                dltModalMovie.style.display = 'block';
+                dltModalMovie.style.display = 'flex';
             });
         });
 
@@ -468,7 +468,7 @@
                 const sessionTitle = button.getAttribute('data-title');
                 dltTextSession.textContent = `Вы уверены, что хотите удалить сеанс «${sessionTitle}» из базы?`;
                 dltFormSession.action = `/admin/sessions/${sessionId}`;
-                dltModalSession.style.display = 'block';
+                dltModalSession.style.display = 'flex';
             }
         });
 
